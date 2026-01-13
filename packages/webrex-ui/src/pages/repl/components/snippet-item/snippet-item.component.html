@@ -1,0 +1,42 @@
+<div class="flex gap-4 justify-between items-center">
+  @let name = nodeInput().name;
+  <!-- TODO: remove this  class.text-red-300 atribute when old snippets gets totally removed-->
+  <div
+    [title]="name"
+    [class.text-red-300]="!nodeInput().value.id"
+    class="text-xs truncate"
+  >
+    {{ name }}
+  </div>
+  <div class="min-w-fit">
+    <ds-button
+      [title]="'Run snippet in the proxied app'"
+      [$variant]="'small'"
+      [$isLoading]="$isRunning()"
+      (click)="run(nodeInput().value)"
+    >
+      ⚡ Run
+    </ds-button>
+    <ds-menu
+      [title]="'More options'"
+      [$variant]="'small-fab'"
+      [$label]="'⋮'"
+      [showSpinner]="$isDeleting()"
+    >
+      <ds-menu-option
+        [title]="'Open snippet in the editor'"
+        value="view"
+        (optionSelect)="open(nodeInput().value)"
+      >
+        👁️ View
+      </ds-menu-option>
+      <ds-menu-option
+        [title]="'Delete snippet forever'"
+        value="delete"
+        (optionSelect)="delete(nodeInput().value)"
+      >
+        🗑️ Delete
+      </ds-menu-option>
+    </ds-menu>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<ul ngTree #tree="ngTree">
+  @if ($nodes().length) {
+    <ng-template
+      [ngTemplateOutlet]="treeNodes"
+      [ngTemplateOutletContext]="{ nodes: $nodes(), parent: tree }"
+    />
+  } @else {
+    <div
+      class="flex justify-between items-center border-0 text-neutral-300 p-2 text-sm"
+    >
+      @if ($isLoading()) {
+        Loading...
+      } @else {
+        No results found.
+      }
+    </div>
+  }
+</ul>
+<ng-template #treeNodes let-nodes="nodes" let-parent="parent">
+  @for (node of nodes; track node.value) {
+    <li
+      ngTreeItem
+      [parent]="parent"
+      [value]="node.value"
+      [label]="node.name"
+      [disabled]="node.disabled"
+      [expanded]="$expandedIds().has(node.value.id)"
+      (expandedChange)="toggleExpanded(node.value.id)"
+      [class.cursor-pointer]="node.children"
+      #treeItem="ngTreeItem"
+    >
+      <span aria-hidden="true" class="material-symbol" translate="no">
+        @let levelSpace = (treeItem.level() - 1) * 4;
+        @if (levelSpace) {
+          <span
+            [class]="'opacity-0 inline-block h-full border-r w-' + levelSpace"
+            >-</span
+          >
+        }
+        {{
+          !node.children ? 'docs' : node.expanded ? 'folder_open' : 'folder'
+        }}</span
+      >
+      <div class="select-nonx grow">
+        @if (node.children) {
+          {{ node.name }}
+        } @else {
+          <ng-container
+            *ngTemplateOutlet="
+              $treeItemTemplateRef();
+              context: { $implicit: node }
+            "
+          ></ng-container>
+        }
+      </div>
+    </li>
+    @if (node.children) {
+      <ul role="group">
+        <ng-template
+          ngTreeItemGroup
+          [ownedBy]="treeItem"
+          #group="ngTreeItemGroup"
+        >
+          <ng-template
+            [ngTemplateOutlet]="treeNodes"
+            [ngTemplateOutletContext]="{
+              nodes: node.children,
+              parent: group,
+            }"
+          />
+        </ng-template>
+      </ul>
+    }
+  }
+</ng-template>

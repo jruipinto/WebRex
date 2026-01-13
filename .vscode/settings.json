@@ -1,0 +1,7 @@
+{
+    "deno.enablePaths": [
+        "./packages/webrex"
+    ],
+    "npm.packageManager": "npm",
+    "deno.enable": true
+}

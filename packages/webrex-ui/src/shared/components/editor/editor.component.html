@@ -1,0 +1,36 @@
+<div class="flex justify-between gap-1">
+  <label class="block font-medium text-neutral-400"> {{ $title() }} </label>
+  <div class="flex grow gap-1 justify-end select-none">
+    <ng-content select="[slot=topcontrols]"></ng-content>
+    @if ($showLanguageSelector()) {
+      <label
+        for="lang-select"
+        class="rounded cursor-pointer hover:bg-neutral-500 hover:text-neutral-300 text-neutral-400 px-2 py-1 text-xs"
+      >
+        Language:
+        <select
+          name="lang"
+          id="lang-select"
+          class="cursor-pointer"
+          (change)="updateLanguage($event)"
+        >
+          @for (lang of availableLanguages; track lang) {
+            <option
+              class="bg-neutral-600 hover:bg-neutral-500 text-neutral-200"
+              [value]="lang | lowercase"
+            >
+              {{ lang }}
+            </option>
+          }
+        </select>
+      </label>
+    }
+  </div>
+</div>
+<div class="h-full">
+  <div
+    #editorContainer
+    [showSpinner]="$isLoading()"
+    class="h-full rounded mt-2 py-2 shadow bg-(--monaco-editor-dark-bg-color)"
+  ></div>
+</div>

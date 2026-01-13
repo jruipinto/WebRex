@@ -1,0 +1,36 @@
+<button
+  ngMenuTrigger
+  #origin
+  #trigger="ngMenuTrigger"
+  [menu]="mainMenu()"
+  [class]="$variantStyles()"
+  [class.bg-neutral-700]="trigger.expanded()"
+  type="button"
+>
+  {{ $label() }}
+</button>
+
+<ng-template
+  [cdkConnectedOverlayOpen]="trigger.expanded()"
+  [cdkConnectedOverlay]="{ origin, usePopover: 'inline' }"
+  [cdkConnectedOverlayPositions]="[
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      offsetY: -2,
+    },
+  ]"
+  cdkAttachPopoverAsChild
+>
+  <div
+    ngMenu
+    #mainMenu="ngMenu"
+    class="m-0 w-[6rem] p-1 rounded border border-neutral-600 bg-neutral-700"
+  >
+    <ng-template ngMenuContent>
+      <ng-content />
+    </ng-template>
+  </div>
+</ng-template>

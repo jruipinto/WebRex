@@ -1,0 +1,7 @@
+:host {
+  display: inline-block;
+}
+
+[ngMenu][data-visible='false'] {
+  display: none;
+}

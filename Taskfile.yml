@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  compile:
+    desc: Compile WebRex app
+    cmd: deno task --cwd packages/webrex-ui build && deno task --cwd packages/webrex compile
+
+  start:backend:
+    desc: Start WebRex backend
+    dir: packages/webrex
+    cmd: deno task start
+    summary: |
+      Starts WebRex backend in development mode (No watch! You must restart to see changes done to backend).
+      PS: It's mandatory to build or start frontend at least once, otherwise there's no UI to be served.
+
+  start:frontend:
+    desc: Build WebRex UI in watch mode
+    dir: packages/webrex-ui
+    cmd: npm run watch
+    summary: |
+      Builds WebRex UI in watch mode to allow you to develop the UI.
+      PS: It's mandatory to run backend in parallel because it serves the fronted
+

@@ -1,0 +1,13 @@
+<app-editor-sidebar
+  [$header]="'Interceptors'"
+  [($searchValue)]="$searchValue"
+  [$flatNodes]="$interceptorsMapped()"
+  [$treeItemTemplateRef]="item"
+>
+</app-editor-sidebar>
+
+<ng-template #item let-node>
+  <app-interceptor-item
+    [nodeInput]="node"
+  ></app-interceptor-item>
+</ng-template>

@@ -1,0 +1,39 @@
+<h1 class="text-xl font-medium">{{ data.header }}</h1>
+<div class="mt-4 text-xs">
+  @if (data.message) {
+    <label id="prompt-input">{{ data.message }}</label>
+  }
+  @if (data.variant === 'prompt') {
+    <input
+      for="prompt-input"
+      [(ngModel)]="$promptAnswer"
+      placeholder="answer..."
+    />
+  }
+</div>
+<div
+  [class]="
+    'mt-8 flex gap-2 items-center ' +
+    (data.variant === 'alert' ? 'justify-center-safe' : 'justify-end-safe')
+  "
+>
+  <button
+    class="inline-flex items-center justify-center rounded cursor-pointer hover:bg-neutral-500 hover:text-neutral-300 text-neutral-400 px-2 py-1 text-xs border border-neutral-700 bg-neutral-700"
+    (click)="
+      dialogRef.close({
+        btnClicked: 'primary',
+        promptAnswer: $promptAnswer(),
+      })
+    "
+  >
+    {{ data.primaryBtn ?? 'OK' }}
+  </button>
+  @if (data.variant !== 'alert') {
+    <button
+      class="inline-flex items-center justify-center rounded cursor-pointer hover:bg-neutral-500 hover:text-neutral-300 text-neutral-400 px-2 py-1 text-xs border border-neutral-700"
+      (click)="dialogRef.close({ btnClicked: 'secondary' })"
+    >
+      {{ data.secondaryBtn ?? 'Cancel' }}
+    </button>
+  }
+</div>

@@ -1,0 +1,9 @@
+<ds-button
+  [title]="'Import JSON file with whole DB Backup'"
+  [$isLoading]="$isLoading()"
+  (click)="fileInput.click()"
+>
+  <span class="material-symbol text-base me-1">upload</span> Import
+</ds-button>
+
+<input #fileInput type="file" class="hidden" (input)="uploadBackup($event)" />
