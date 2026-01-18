@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { InternalConfig } from '@core/config/internal-config.ts';
 import { findFreePort } from '@core/utils/find-free-port.ts';
 import { afterInit } from './after-init.ts';
+import { firstValueFrom } from 'rxjs';
 
 type BootstrapParams = {
   conf: InternalConfig;
@@ -12,12 +13,14 @@ type BootstrapParams = {
  * Universal Bootstrapper
  * Detects runtime and runs accordingly
  */
-export async function bootstrap({ conf, app }: BootstrapParams): Promise<void> {
+export async function bootstrap({ app, conf }: BootstrapParams): Promise<void> {
+  const config = await firstValueFrom(conf.config$);
+
   const onListen = afterInit(conf);
 
   const serverOptions = {
-    port: await findFreePort({ basePort: (await conf.config).port ?? 3001 }),
-    hostname: (await conf.config).hostname,
+    port: await findFreePort({ basePort: config.port ?? 3001 }),
+    hostname: config.hostname,
     fetch: app.fetch,
   };
 

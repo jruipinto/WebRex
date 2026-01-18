@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Dialog } from '@angular/cdk/dialog';
 import { transform } from 'esbuild-wasm/esm/browser';
 import {
   tap,
@@ -15,19 +14,20 @@ import {
 import {
   ApiResponse,
   TypedForm,
-  DsDialogComponent,
-  DsDialogOutput,
-  DsDialogInput,
   RealtimeApiService,
+  ReplOutputApiService,
+  DialogService,
 } from 'src/shared';
 import { ReplDocument } from './models';
 import { ReplApiService } from './repl-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReplService {
-  private readonly dialog = inject(Dialog);
+  private readonly dialogService = inject(DialogService);
+
   private readonly http = inject(HttpClient); // TODO: remove when oldSnippets get removed, if not needed anymore
   private readonly replApiService = inject(ReplApiService);
+  private readonly replOutputApiService = inject(ReplOutputApiService);
   private readonly realtimeApiService = inject(RealtimeApiService);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -101,7 +101,7 @@ export class ReplService {
 
     this.form.updateValueAndValidity({ emitEvent: false });
     if (this.form.invalid) {
-      alert(
+      this.dialogService.showWarning(
         `Snippet form is invalid. Fix errors: ${JSON.stringify(this.form.errors)}`
       );
       return;
@@ -135,19 +135,12 @@ export class ReplService {
   }
 
   async delete(i: ApiResponse<ReplDocument>['result'][0]): Promise<void> {
-    const promptResult = await firstValueFrom(
-      this.dialog.open<DsDialogOutput, DsDialogInput, DsDialogComponent>(
-        DsDialogComponent,
-        {
-          data: {
-            header: 'Are you sure?',
-            message: `You're about to delete "${i.value.context}"`,
-            primaryBtn: 'Yes, delete',
-            secondaryBtn: 'Cancel',
-          },
-        }
-      ).closed
-    );
+    const promptResult = await this.dialogService.showPrompt({
+      header: 'Are you sure?',
+      message: `You're about to delete "${i.value.context}"`,
+      primaryBtn: 'Yes, delete',
+      secondaryBtn: 'Cancel',
+    });
 
     const canDelete = promptResult?.btnClicked === 'primary';
 
@@ -167,29 +160,12 @@ export class ReplService {
       loader: 'ts',
     });
 
-    // TODO: split snippets from repl, in backend and frontend accordingly.
-    // currently the first documeent in repl api, is being used as place
-    // for current repl document intended to be executed.
-    // In short, when 1st document gets updated, it gets executed in the
-    // proxied app. This could lead to bugs because nothing guarantes
-    // that the 1st document is always the placeholder.
-    // Having a snippets api split from repl api will prevent bugs
-    const oldId = (await firstValueFrom(this.replApiService.search())).result[0]
-      ?.id;
-
-    oldId
-      ? await firstValueFrom(
-          this.replApiService.update(oldId, {
-            codeTS: i.value.codeTS,
-            codeJS: javascript.code,
-          } as ReplDocument)
-        )
-      : await firstValueFrom(
-          this.replApiService.create({
-            codeTS: i.value.codeTS,
-            codeJS: javascript.code,
-          } as ReplDocument)
-        );
+    await firstValueFrom(
+      this.replOutputApiService.create({
+        codeTS: i.value.codeTS,
+        codeJS: javascript.code,
+      })
+    );
   }
 
   async compileToJSAndCopyToClipboard(codeTs: string): Promise<void> {

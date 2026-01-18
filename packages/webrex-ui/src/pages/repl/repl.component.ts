@@ -1,7 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EditorComponent, DsButtonComponent } from 'src/shared';
-import { ReactiveFormsModule } from '@angular/forms';
+import {
+  EditorComponent,
+  DsButtonComponent,
+  PathInputComponent,
+} from 'src/shared';
 import { SnippetListComponent } from './components';
 import { ReplService } from './repl.service';
 
@@ -13,8 +16,8 @@ import { ReplService } from './repl.service';
     CommonModule,
     EditorComponent,
     SnippetListComponent,
-    ReactiveFormsModule,
     DsButtonComponent,
+    PathInputComponent,
   ],
 })
 export class ReplComponent {

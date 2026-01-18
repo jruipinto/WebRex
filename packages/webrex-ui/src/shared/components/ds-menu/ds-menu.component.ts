@@ -40,7 +40,7 @@ export class DsMenuComponent {
       (keydown.enter)="optionSelect.emit(value())"
       (keydown.space)="optionSelect.emit(value())"
     >
-      <span><ng-content /></span>
+      <ng-content />
     </div>
   `,
   imports: [MenuItem],

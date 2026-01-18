@@ -17,7 +17,7 @@ export class InterceptorListComponent {
 
   $interceptorsMapped = computed(() =>
     (this.$interceptors() ?? [])
-      .filter((i) => i.value.context?.match(this.$searchValue()))
+      .filter((i) => new RegExp(this.$searchValue(), 'i').test(i.value.context))
       .map((node) => ({
         name: node.value.context as `/${string}`,
         value: node,

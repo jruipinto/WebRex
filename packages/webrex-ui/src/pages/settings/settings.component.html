@@ -1,5 +1,6 @@
 <app-editor
   class="grow"
+  [$title]="'Settings'"
   [value]="(settings$ | async) ?? ''"
   (valueChange)="$unsavedConfig.set($event)"
   (keydown)="saveSettings($event)"
@@ -7,16 +8,15 @@
 >
   <div
     slot="topcontrols"
-    class="grow inline-flex gap-2 justify-end items-center ps-1"
+    class="grow inline-flex justify-end items-center ps-1"
   >
     <app-import-button></app-import-button>
     <app-export-button></app-export-button>
     <ds-button
-      class="-mt-[2px]"
       [title]="'Save WebRex configuration\'s changes'"
       [$isLoading]="$isSaving()"
       (click)="saveSettings(null)"
-      >💾 Save</ds-button
+      ><span class="material-symbol text-base me-1">save</span> Save</ds-button
     >
   </div>
 </app-editor>

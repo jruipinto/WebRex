@@ -9,6 +9,7 @@
     "npm:@deno/kv@0.13": "0.13.0",
     "npm:@hono/node-server@~1.19.7": "1.19.8_hono@4.11.3",
     "npm:@ngrok/ngrok@1.7": "1.7.0",
+    "npm:arktype@^2.1.29": "2.1.29",
     "npm:esbuild@~0.25.10": "0.25.12",
     "npm:hono@~4.11.3": "4.11.3",
     "npm:object-deep-compare@*": "2.0.0",
@@ -42,6 +43,15 @@
     }
   },
   "npm": {
+    "@ark/schema@0.56.0": {
+      "integrity": "sha512-ECg3hox/6Z/nLajxXqNhgPtNdHWC9zNsDyskwO28WinoFEnWow4IsERNz9AnXRhTZJnYIlAJ4uGn3nlLk65vZA==",
+      "dependencies": [
+        "@ark/util"
+      ]
+    },
+    "@ark/util@0.56.0": {
+      "integrity": "sha512-BghfRC8b9pNs3vBoDJhcta0/c1J1rsoS1+HgVUreMFPdhz/CRAKReAu57YEllNaSy98rWAdY1gE+gFup7OXpgA=="
+    },
     "@deno/kv-darwin-arm64@0.13.0": {
       "integrity": "sha512-yKYaanxbT5xo/Vfempgt2klZVFf3P/dFYOkJqaerwBS020WLziJpjb9N5cmmT63btaT8dZX0df0a/xUH0INdQw==",
       "os": ["darwin"],
@@ -295,6 +305,20 @@
         "@ngrok/ngrok-win32-x64-msvc"
       ]
     },
+    "arkregex@0.0.5": {
+      "integrity": "sha512-ncYjBdLlh5/QnVsAA8De16Tc9EqmYM7y/WU9j+236KcyYNUXogpz3sC4ATIZYzzLxwI+0sEOaQLEmLmRleaEXw==",
+      "dependencies": [
+        "@ark/util"
+      ]
+    },
+    "arktype@2.1.29": {
+      "integrity": "sha512-jyfKk4xIOzvYNayqnD8ZJQqOwcrTOUbIU4293yrzAjA3O1dWh61j71ArMQ6tS/u4pD7vabSPe7nG3RCyoXW6RQ==",
+      "dependencies": [
+        "@ark/schema",
+        "@ark/util",
+        "arkregex"
+      ]
+    },
     "chownr@3.0.0": {
       "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g=="
     },
@@ -376,18 +400,13 @@
       "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="
     }
   },
-  "remote": {
-    "https://deno.land/x/denoflate@1.2.1/mod.ts": "f5628e44b80b3d80ed525afa2ba0f12408e3849db817d47a883b801f9ce69dd6",
-    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js": "b9f9ad9457d3f12f28b1fb35c555f57443427f74decb403113d67364e4f2caf4",
-    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",
-    "https://deno.land/x/esbuild@v0.27.1/mod.js": "d54fbb416d6559fb1daf15cb06747f1c3486a86f2da1601b147b6a51d78f051f"
-  },
   "workspace": {
     "dependencies": [
       "jsr:@olli/kvdex@~3.4.2",
       "npm:@deno/kv@0.13",
       "npm:@hono/node-server@~1.19.7",
       "npm:@ngrok/ngrok@1.7",
+      "npm:arktype@^2.1.29",
       "npm:esbuild@~0.25.10",
       "npm:hono@~4.11.3",
       "npm:object-deep-compare@*",

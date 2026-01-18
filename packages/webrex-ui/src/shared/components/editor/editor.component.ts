@@ -1,12 +1,10 @@
 import {
   Component,
-  effect,
   ElementRef,
   EventEmitter,
   inject,
   input,
   Input,
-  model,
   OnDestroy,
   OnInit,
   output,
@@ -25,6 +23,8 @@ import { LoadingDirective } from 'src/shared/directives';
 import { EditorService } from './editor.service';
 import { pauseUntilDefined } from '../../helpers';
 import { jsonParseEditorAction, jsonStringifyEditorAction } from './helpers';
+
+// TODO: Refactor this component body, moving logic to services, to reduce maintenance complexity
 
 declare global {
   interface Window {

@@ -9,24 +9,21 @@ import {
   shareReplay,
   firstValueFrom,
 } from 'rxjs';
+import { InterceptorDocument } from '@webrex/contracts';
 import {
   ApiResponse,
   TypedForm,
   RealtimeApiService,
-  DsDialogComponent,
-  DsDialogInput,
-  DsDialogOutput,
+  DialogService,
 } from 'src/shared';
 import { InterceptorsApiService } from './interceptors-api.service';
-import { InterceptorDocument } from './models';
-import { Dialog } from '@angular/cdk/dialog';
 
 @Injectable({ providedIn: 'root' })
 export class InterceptorsService {
-  private readonly dialog = inject(Dialog);
   private readonly interceptorsApiService = inject(InterceptorsApiService);
   private readonly realtimeApiService = inject(RealtimeApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly dialogService = inject(DialogService);
 
   $id = signal('');
 
@@ -34,7 +31,7 @@ export class InterceptorsService {
 
   private refresh$ = this.realtimeApiService.watchEntity('interceptors').pipe(
     map(() => true),
-    startWith(true)
+    startWith(true),
   );
 
   interceptors$ = this.refresh$.pipe(
@@ -47,11 +44,11 @@ export class InterceptorsService {
       this.$isFetching.set(false);
     }),
     startWith([] as ApiResponse<InterceptorDocument>['result']),
-    shareReplay({ refCount: true, bufferSize: 1 })
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
   form = this.fb.group({
-    codeJS: this.fb.control(''),
+    codeJS: this.fb.control('' as InterceptorDocument['codeJS']),
     codeTS: this.fb.control(interceptorExample, [
       Validators.required,
       Validators.pattern(/export\s+default\s+async\s+function/),
@@ -75,8 +72,8 @@ export class InterceptorsService {
 
     this.form.updateValueAndValidity({ emitEvent: false });
     if (this.form.invalid) {
-      alert(
-        `Interceptor form is invalid. Fix errors: ${JSON.stringify(this.form.errors)}`
+      this.dialogService.showWarning(
+        `Interceptor form is invalid. Fix errors: ${JSON.stringify(this.form.errors)}`,
       );
       return;
     }
@@ -88,11 +85,14 @@ export class InterceptorsService {
       loader: 'ts',
     });
 
-    this.form.controls.codeJS.setValue(javascript.code, { emitEvent: false });
+    this.form.controls.codeJS.setValue(
+      javascript.code as InterceptorDocument['codeJS'],
+      { emitEvent: false },
+    );
 
     if (!javascript.code.includes('export default async function')) {
-      alert(
-        'Invalid interceptor! Interceptor must export a default async function.'
+      this.dialogService.showWarning(
+        'Invalid interceptor! Interceptor must export a default async function.',
       );
 
       return;
@@ -102,14 +102,16 @@ export class InterceptorsService {
       await firstValueFrom(
         this.interceptorsApiService.patch(
           this.$id(),
-          this.form.value as InterceptorDocument
-        )
+          this.form.value as InterceptorDocument,
+        ),
       );
       return;
     }
 
     await firstValueFrom(
-      this.interceptorsApiService.create(this.form.value as InterceptorDocument)
+      this.interceptorsApiService.create(
+        this.form.value as InterceptorDocument,
+      ),
     );
   }
 
@@ -119,21 +121,14 @@ export class InterceptorsService {
   }
 
   async delete(
-    i: ApiResponse<InterceptorDocument>['result'][0]
+    i: ApiResponse<InterceptorDocument>['result'][0],
   ): Promise<void> {
-    const promptResult = await firstValueFrom(
-      this.dialog.open<DsDialogOutput, DsDialogInput, DsDialogComponent>(
-        DsDialogComponent,
-        {
-          data: {
-            header: 'Are you sure?',
-            message: `You're about to delete "${i.value.context}"`,
-            primaryBtn: 'Yes, delete',
-            secondaryBtn: 'Cancel',
-          },
-        }
-      ).closed
-    );
+    const promptResult = await this.dialogService.showPrompt({
+      header: 'Are you sure?',
+      message: `You're about to delete "${i.value.context}"`,
+      primaryBtn: 'Yes, delete',
+      secondaryBtn: 'Cancel',
+    });
 
     const canDelete = promptResult?.btnClicked === 'primary';
 
@@ -145,7 +140,7 @@ export class InterceptorsService {
   }
 
   async toggleInterceptor(
-    i: ApiResponse<InterceptorDocument>['result'][0]
+    i: ApiResponse<InterceptorDocument>['result'][0],
   ): Promise<void> {
     await firstValueFrom(this.interceptorsApiService.patch(i.id, i.value));
   }

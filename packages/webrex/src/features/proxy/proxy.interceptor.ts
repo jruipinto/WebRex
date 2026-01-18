@@ -1,4 +1,5 @@
 import { Context, Next } from 'hono';
+import { firstValueFrom } from 'rxjs';
 import { InternalConfig } from '@core/config/internal-config.ts';
 import { patchHtmlResponses } from './services/patch-html-response/patch-html-response.ts';
 import { intercept } from './services/intercept/intercept.ts';
@@ -11,13 +12,13 @@ export const proxyInterceptorMiddleware = (conf: InternalConfig) => {
     const url = new URL(c.req.url);
     const contentType = response.headers.get('content-type');
 
-    // --- BUSINESS RULES (From your old code) ---
+    // --- BUSINESS RULES ---
     const isHtml = contentType?.includes('text/html');
     const isAsset = /\.\w+$/.test(url.pathname);
     const isSuccess = response.status >= 200 && response.status < 300;
 
     // Rule: Don't intercept assets or non-2xx status (unless forceMock is on)
-    const config = await conf.config;
+    const config = await firstValueFrom(conf.config$);
     if (isAsset || (!config.forceMock && !isSuccess)) {
       return;
     }
@@ -32,7 +33,7 @@ export const proxyInterceptorMiddleware = (conf: InternalConfig) => {
     }
 
     // Rule: Apply final interception (Snippets, etc.)
-    const db = await conf.db;
+    const db = await firstValueFrom(conf.db$);
     c.res = await intercept(url.pathname, finalResponse, config, db);
   };
 };

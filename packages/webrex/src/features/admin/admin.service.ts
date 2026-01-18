@@ -27,10 +27,12 @@ export const adminService = {
   ) {
     const collection = db[entity];
     collection.getOne();
-    const status = await collection.add(payload);
+    const status = await collection
+      .add(payload)
+      .catch(mapSchemaErrors(undefined));
 
     if (status.ok) {
-      this.notify(entity, 'POST', undefined, payload);
+      this.notify(entity, 'POST', status.id, payload);
     }
     return status;
   },
@@ -45,13 +47,12 @@ export const adminService = {
     payload: any
   ) {
     const collection = db[entity];
-    const status = await collection.upsert(
-      { id, update: payload, set: payload },
-      { strategy: 'replace' }
-    );
+    const status = await collection
+      .upsert({ id, update: payload, set: payload }, { strategy: 'replace' })
+      .catch(mapSchemaErrors(id));
 
     if (status.ok) {
-      this.notify(entity, 'PUT', id, payload);
+      this.notify(entity, 'PUT', status.id, payload);
     }
     return status;
   },
@@ -66,10 +67,12 @@ export const adminService = {
     payload: any
   ) {
     const collection = db[entity];
-    const status = await collection.update(id, payload, { strategy: 'merge' });
+    const status = await collection
+      .update(id, payload, { strategy: 'merge' })
+      .catch(mapSchemaErrors(id));
 
     if (status.ok) {
-      this.notify(entity, 'PATCH', id, payload);
+      this.notify(entity, 'PATCH', status.id, payload);
     }
     return status;
   },
@@ -123,3 +126,11 @@ export const adminService = {
     });
   },
 };
+
+const mapSchemaErrors = (id: string | undefined) => (err: Error) => ({
+  errors: (JSON.parse(err.message) ?? [])?.map(
+    (i: { message: string }) => i.message
+  ),
+  ok: false,
+  id,
+});

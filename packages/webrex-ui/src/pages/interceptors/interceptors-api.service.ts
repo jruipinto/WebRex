@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { InterceptorDocument } from '@webrex/contracts';
 import { AbstractApiService } from 'src/shared';
-import { InterceptorDocument } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class InterceptorsApiService extends AbstractApiService<InterceptorDocument> {

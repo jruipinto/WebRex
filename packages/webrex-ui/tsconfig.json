@@ -23,7 +23,12 @@
     "lib": [
       "ESNext",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@webrex/contracts": [
+        "../webrex-contracts/index.ts"
+      ],
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

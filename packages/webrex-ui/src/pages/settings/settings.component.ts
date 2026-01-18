@@ -7,6 +7,7 @@ import {
   DsButtonComponent,
   pauseUntilDefined,
   RealtimeApiService,
+  DialogService,
 } from 'src/shared';
 import { SettingsApiService } from './settings-api.service';
 import { ExportButtonComponent, ImportButtonComponent } from './components';
@@ -26,6 +27,7 @@ import { ExportButtonComponent, ImportButtonComponent } from './components';
 export class SettingsComponent {
   settingsApiService = inject(SettingsApiService);
   private readonly realtimeApiService = inject(RealtimeApiService);
+  private readonly dialogservice = inject(DialogService);
 
   $unsavedConfig = signal('');
   $isFetching = signal(false);
@@ -109,19 +111,25 @@ export class SettingsComponent {
     if (!webrexConfigObject) {
       this.$isSaving.set(false);
 
-      alert('Failed to parse!');
+      this.dialogservice.showWarning('Failed to parse!');
       return;
     }
 
     const oldConfigId = (await firstValueFrom(this.settingsApiService.search()))
       .result[0].id;
 
-    await firstValueFrom(
+    const saveResult = await firstValueFrom(
       this.settingsApiService.update(oldConfigId, {
         codeTS: this.$unsavedConfig(),
-        codeJS: JSON.stringify(webrexConfigObject),
+        codeJS: webrexConfigObject,
       })
     );
+
+    if(saveResult.errors) {
+      this.dialogservice.showWarning(saveResult.errors.join('; '))
+    }
+
+
     this.$isSaving.set(false);
   }
 }

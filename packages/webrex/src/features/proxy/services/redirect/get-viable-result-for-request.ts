@@ -2,7 +2,7 @@ import { ProxyRoute } from '@models/configuration.ts';
 import { forwardRequestToUrl } from './forward-request-to-url.ts';
 
 export async function getViableResultForRequest(
-  viableProxyRoutes: ProxyRoute[],
+  routes: ProxyRoute[],
   requestUrl: URL,
   request: Request
 ): Promise<{
@@ -10,6 +10,11 @@ export async function getViableResultForRequest(
   responseError: Error | null;
   target: URL;
 }> {
+  // Avoid infinite loops
+  const viableProxyRoutes = routes.filter(
+    ({ target }) => !requestUrl.toString().includes(target)
+  );
+
   if (!viableProxyRoutes.length) {
     return {
       response: Response.json({}, { status: 404 }),

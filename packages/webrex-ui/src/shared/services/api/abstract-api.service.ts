@@ -2,6 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ApiResponse } from 'src/shared';
 
+type Result = {
+  id: string;
+  ok: boolean;
+  timestamp?: string;
+  /** Schema errors */
+  errors?: string[];
+};
+
 export abstract class AbstractApiService<T> {
   private readonly http = inject(HttpClient);
   protected readonly API_PREFIX = '/webrex-api';
@@ -20,18 +28,18 @@ export abstract class AbstractApiService<T> {
   }
   /** Create new document */
   create(payload: T) {
-    return this.http.post<T>(this.API_PATH, payload);
+    return this.http.post<Result>(this.API_PATH, payload);
   }
   /** Replace document */
   update(id: string, payload: T) {
-    return this.http.put<T>(`${this.API_PATH}/${id}`, payload);
+    return this.http.put<Result>(`${this.API_PATH}/${id}`, payload);
   }
   /** Patch document */
   patch(id: string, payload: T) {
-    return this.http.patch<T>(`${this.API_PATH}/${id}`, payload);
+    return this.http.patch<Result>(`${this.API_PATH}/${id}`, payload);
   }
   /** Delete document by id or all if id is `*` */
   delete(id: string) {
-    return this.http.delete<T>(`${this.API_PATH}/${id}`);
+    return this.http.delete<{ ok: boolean }>(`${this.API_PATH}/${id}`);
   }
 }

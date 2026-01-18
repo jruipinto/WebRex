@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AbstractApiService } from 'src/shared/services/api/abstract-api.service';
-
-type WebLogsDocument = string;
+import { WeblogsDocument } from '@webrex/contracts';
+import { AbstractApiService } from 'src/shared';
 
 @Injectable({ providedIn: 'root' })
-export class WebLogsApiService extends AbstractApiService<WebLogsDocument> {
+export class WebLogsApiService extends AbstractApiService<WeblogsDocument> {
   protected override readonly API_PATH = `${this.API_PREFIX}/weblogs`;
 }

@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { merge, fromEvent, tap, takeWhile, map } from 'rxjs';
+import { merge, fromEvent, tap, takeWhile, map, switchMap } from 'rxjs';
 import { NoSqlDB } from '@core/database/no-sql-db.ts';
 import { serverLogStream$ } from '@core/bootstrap/telemetry.stream.ts';
 import {
@@ -25,14 +25,17 @@ export function handleAdminWebSocket(
     )
   );
 
-  merge(
-    fromEvent<{ type: 'close' }>(socket, 'close'),
-    fromEvent<{ type: 'error' }>(socket, 'error'),
-    fromEvent<MessageEvent<string>>(socket, 'message'),
-    realtimeChanges$, // Listen to changes made via REST API to broadcast them
-    logBroadcast$ // teletry does not use admin service so we need to listen to its own stream
-  )
+  fromEvent<{ type: 'open' }>(socket, 'open')
     .pipe(
+      switchMap(() =>
+        merge(
+          fromEvent<{ type: 'close' }>(socket, 'close'),
+          fromEvent<{ type: 'error' }>(socket, 'error'),
+          fromEvent<MessageEvent<string>>(socket, 'message'),
+          realtimeChanges$, // Listen to changes made via REST API to broadcast them
+          logBroadcast$ // teletry does not use admin service so we need to listen to its own stream
+        )
+      ),
       tap(async (evt) => {
         // Handle Inbound Messages (Client -> Server)
         if (evt.type === 'message') {

@@ -5,20 +5,30 @@ import {
   OnDestroy,
   signal,
 } from '@angular/core';
-import { EditorComponent, DsButtonComponent } from 'src/shared';
+import {
+  EditorComponent,
+  DsButtonComponent,
+  PathInputComponent,
+  DialogService,
+} from 'src/shared';
 import { StorageService } from './storage.service';
 import { StorageListComponent } from './components';
 import { StorageItem } from './models';
-import { Dialog } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-storage',
   templateUrl: './storage.component.html',
   styleUrl: './storage.component.css',
-  imports: [EditorComponent, DsButtonComponent, StorageListComponent],
+  imports: [
+    EditorComponent,
+    DsButtonComponent,
+    StorageListComponent,
+    PathInputComponent,
+  ],
 })
 export class StorageComponent implements OnDestroy {
   private readonly service = inject(StorageService);
+  private readonly dialogService = inject(DialogService);
 
   $selectedItem = this.service.$selectedItem;
   $value = linkedSignal(() => this.$selectedItem()?.value ?? '');
@@ -42,7 +52,7 @@ export class StorageComponent implements OnDestroy {
 
   async writeItem(i: StorageItem | null, updatedValue: string): Promise<void> {
     if (!i) {
-      await this.service.alert(
+      await this.dialogService.showWarning(
         'Please select a storage item and make changes, to be able to save anything.'
       );
       return;

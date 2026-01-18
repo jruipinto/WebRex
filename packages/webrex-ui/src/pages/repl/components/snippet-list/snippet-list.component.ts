@@ -17,7 +17,8 @@ export class SnippetListComponent {
 
   $snippetsMapped = computed(() =>
     (this.$snippets() ?? [])
-      .filter((i) => i.value.context?.match(this.$searchValue()))
+      .filter((i) => i.value.context)
+      .filter((i) => new RegExp(this.$searchValue(), 'i').test(i.value.context))
       .map((node) => ({
         name: node.value.context as `/${string}`,
         value: node,

@@ -3,9 +3,11 @@ import {
   HttpHandlerFn,
   HttpEvent,
   HttpEventType,
+  HttpResponse,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { ToastService } from '../components';
 
 export function feedbackInterceptor(
@@ -15,27 +17,24 @@ export function feedbackInterceptor(
   const toast = inject(ToastService);
 
   return next(req).pipe(
-    tap((event) => {
-      if (event.type !== HttpEventType.Response) {
-        return;
+    tap({
+      next: (event) => {
+        if (event.type === HttpEventType.Response && req.method !== 'GET')
+          toast.informSuccess('Done');
+      },
+      error: () =>
+        toast.informFailure(req.method === 'GET' ? 'Load failed' : 'Failed'),
+    }),
+    catchError((error) => {
+      // Wrap the error in a "Failure" value
+      if (error instanceof HttpErrorResponse) {
+        return of(
+          new HttpResponse({
+            body: error.error,
+          })
+        );
       }
-      if (req.method === 'GET' && /4|5\d\d/.test(String(event.status))) {
-        toast.informFailure(`Load failed`);
-
-        return;
-      }
-
-      if (req.method !== 'GET' && /2\d\d/.test(String(event.status))) {
-        toast.informSuccess(`Done`);
-
-        return;
-      }
-
-      if (req.method !== 'GET' && /4|5\d\d/.test(String(event.status))) {
-        toast.informFailure(`Failed`);
-
-        return;
-      }
+      return throwError(() => error);
     })
   );
 }

@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
+import { SettingsDocument } from '@webrex/contracts';
 import { AbstractApiService } from 'src/shared';
-
-type SettingsDocument = {
-  codeTS: string;
-  codeJS: string;
-};
 
 @Injectable({ providedIn: 'root' })
 export class SettingsApiService extends AbstractApiService<SettingsDocument> {

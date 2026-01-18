@@ -1,4 +1,6 @@
+import { normalize } from 'node:path';
 import type { Context } from 'hono';
+import { firstValueFrom } from 'rxjs';
 import { ProxyRoute } from '@models/configuration.ts';
 import { InternalConfig } from '@core/config/internal-config.ts';
 import { serveStatic } from '@core/utils/servestatic.ts';
@@ -18,7 +20,7 @@ export async function redirect({
   conf: InternalConfig;
 }): Promise<readonly [Response, URL]> {
   const req = context.req.raw;
-  const config = await conf.config; // promise ensures that the config is always up-to-date (and it must be inside this function)
+  const config = await firstValueFrom(conf.config$); // promise ensures that the config is always up-to-date (and it must be inside this function)
   const proxyRoutes = config.proxy;
   const responseMockedFromHar = await mockFromHAR({ req, conf: config });
 
@@ -33,12 +35,12 @@ export async function redirect({
 
   // for static files serving
   if (staticRoute) {
-    const hasExtension = /\w+\.\w+$/.test(url.pathname);
+    const isRequestingAsset = (path: string) => /\w+\.\w+$/.test(path);
 
     const res = await serveStatic({
-      root: staticRoute.target.replace('file://', ''),
+      root: normalize(staticRoute.target.replace('file://', '')),
       rewriteRequestPath: (path) =>
-        !hasExtension ? '/index.html' : path.replace('/webrex-ui', ''),
+        !isRequestingAsset(path) ? '/index.html' : path,
     })(context, async () => {});
 
     return [
@@ -68,16 +70,27 @@ export async function redirect({
   }
 
   if (responseError) {
-    console.log(
-      `[${new Date().toISOString()}]  ${
-        responseError.name
-      }  ${req.method.padEnd(6, ' ')}${target.href}\n`,
-      {
-        errorLog: {
-          headers: response.headers,
-          exception: responseError,
+    const timestamp = new Date().toISOString();
+
+    const headersObj: Record<string, string> = {};
+    response.headers.forEach((value, key) => (headersObj[key] = value));
+
+    const logData = {
+      errorLog: {
+        headers: headersObj,
+        exception: {
+          name: responseError.name,
+          message: responseError.message,
+          stack: responseError.stack?.split('\n'),
         },
-      }
+      },
+    };
+    console.log(
+      `[${timestamp}] ${responseError.name.padStart(
+        11,
+        ' '
+      )} ${req.method.padEnd(7, ' ')}${target.href}\n`,
+      logData
     );
   }
 

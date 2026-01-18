@@ -1,16 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { filter, firstValueFrom, map, retry, timeout } from 'rxjs';
+import { catchError, filter, firstValueFrom, map, of, timeout } from 'rxjs';
+import { ReplOutputDocument } from '@webrex/contracts';
 import {
-  DsDialogComponent,
-  DsDialogInput,
-  DsDialogOutput,
+  DialogService,
   RealtimeApiService,
+  ReplOutputApiService,
   tryToParse,
 } from 'src/shared';
-import { ReplDocument } from '../repl/models';
 import { ReplApiService } from '../repl/repl-api.service';
-import { ReplOutputApiService } from './repl-output-api.service';
-import { CompressionHelpers } from './helpers';
 import { StorageItem } from './models';
 import { transform } from 'esbuild-wasm/esm/browser';
 import {
@@ -21,14 +18,13 @@ import {
   setLocalStorageValueScript,
   setSessionStorageValueScript,
 } from './helpers';
-import { Dialog } from '@angular/cdk/dialog';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-  replApiService = inject(ReplApiService);
-  replOutputApiService = inject(ReplOutputApiService);
-  realtimeApiService = inject(RealtimeApiService);
-  private readonly dialog = inject(Dialog);
+  readonly replApiService = inject(ReplApiService);
+  readonly replOutputApiService = inject(ReplOutputApiService);
+  readonly realtimeApiService = inject(RealtimeApiService);
+  readonly dialogService = inject(DialogService);
 
   $selectedItem = signal<StorageItem | null>(null);
   $storageItems = signal([] as StorageItem[]);
@@ -39,11 +35,11 @@ export class StorageService {
       return;
     }
     const sessionStorageKeys = tryToParse(
-      (await this.executeInProxiedApp(getSessionStorageKeysScript)) ?? '[]'
+      (await this.executeInProxiedApp(getSessionStorageKeysScript)) ?? '[]',
     ) as string[];
 
     const localStorageKeys = tryToParse(
-      (await this.executeInProxiedApp(getLocalStorageKeysScript)) ?? '[]'
+      (await this.executeInProxiedApp(getLocalStorageKeysScript)) ?? '[]',
     ) as string[];
 
     const storageItems = [
@@ -53,7 +49,7 @@ export class StorageService {
           key,
           storageType: 'sessionStorage',
           value: 'tobedefined',
-        })
+        }),
       ),
       localStorageKeys.map(
         (key, id): StorageItem => ({
@@ -61,7 +57,7 @@ export class StorageService {
           key,
           storageType: 'localStorage',
           value: 'tobedefined',
-        })
+        }),
       ),
     ].flat() as StorageItem[];
 
@@ -72,7 +68,7 @@ export class StorageService {
     const itemValue = (await this.executeInProxiedApp(
       i.storageType === 'sessionStorage'
         ? getSessionStorageValueScript(i.key)
-        : getLocalStorageValueScript(i.key)
+        : getLocalStorageValueScript(i.key),
     )) as string;
 
     this.$selectedItem.set({
@@ -84,33 +80,23 @@ export class StorageService {
   async writeItem(i: StorageItem): Promise<void> {
     (await this.executeInProxiedApp(
       i.storageType === 'sessionStorage'
-        ? setSessionStorageValueScript(i.key, i.value)
-        : setLocalStorageValueScript(i.key, i.value)
+        ? setSessionStorageValueScript(i.key, JSON.stringify(i.value))
+        : setLocalStorageValueScript(i.key, JSON.stringify(i.value)),
     )) as string;
   }
 
-  async alert(message: string): Promise<void> {
-    await firstValueFrom(
-      this.dialog.open<DsDialogOutput, DsDialogInput, DsDialogComponent>(
-        DsDialogComponent,
-        {
-          data: {
-            variant: 'alert',
-            header: 'Warning!',
-            message,
-            primaryBtn: 'Ok',
-          },
-        }
-      ).closed
-    );
-  }
-
   private async executeInProxiedApp(
-    codeTs: string
+    codeTs: string,
   ): Promise<string | undefined> {
     const javascript = await transform(codeTs, {
       loader: 'ts',
+    }).catch((e) => {
+      console.log(e);
     });
+
+    if (!javascript) {
+      return;
+    }
 
     const codeJS = javascript.code;
 
@@ -118,34 +104,29 @@ export class StorageService {
       this.replOutputApiService.create({
         codeTS: codeTs,
         codeJS: codeJS,
-      })
+      }),
     );
 
-    const compressedEvaluationResult =
+    const evaluationResult =
       (await firstValueFrom(
-        this.replOutputApiService.get(result['id']).pipe(
-          retry(3),
-          timeout(3000),
-          map((res) => {
-            const result = res?.value?.result;
-            if (result === null || result === undefined) {
-              throw new Error('Not run yet');
-            }
-            return result;
-          })
-        )
+        this.realtimeApiService.watchEntity('reploutput').pipe(
+          filter((i) => i.data?.data?.id === result.id),
+          map((i) => (i.data?.data?.payload as ReplOutputDocument)?.result),
+          filter((result) => result !== null && result !== undefined),
+          timeout(4000),
+          catchError((err) => {
+            console.error(err);
+            return of(undefined);
+          }),
+        ),
       )) ?? 'failed';
 
-    if (compressedEvaluationResult === 'failed') {
-      await this.alert(
-        'The remote execution of some scripts in proxied app, timed out. Please check if the app is open or refresh it.'
+    if (evaluationResult === 'failed') {
+      await this.dialogService.showWarning(
+        'No proxied app is responding. Please check if proxied app is open or refresh it.',
       );
       return;
     }
-
-    const evaluationResult = await CompressionHelpers.decompressFromBase64(
-      compressedEvaluationResult
-    );
 
     return evaluationResult;
   }

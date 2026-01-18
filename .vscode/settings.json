@@ -3,5 +3,13 @@
         "./packages/webrex"
     ],
     "npm.packageManager": "npm",
-    "deno.enable": true
+    "deno.enable": true,
+    // allow autocomplete for ArkType expressions like "string | num"
+    "editor.quickSuggestions": {
+        "strings": "on"
+    },
+    // prioritize ArkType's "type" for autoimports
+    "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+        "^(node:)?os$"
+    ],
 }

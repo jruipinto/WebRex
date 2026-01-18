@@ -16,7 +16,7 @@ export class StorageListComponent {
 
   $storageItemsMapped = computed(() =>
     (this.$storageItems() ?? [])
-      .filter((i) => i.key?.match(this.$searchValue()))
+      .filter((i) => new RegExp(this.$searchValue(), 'i').test(i.key))
       .map((i) => ({
         name: `/${i.storageType}/${i.key}` as `/${string}`,
         value: i,

@@ -1,6 +1,7 @@
 <div class="flex gap-4 h-full max-[960px]:gap-10">
   <app-editor
     class="grow"
+    [$title]="'Storage'"
     [value]="$value()"
     (valueChange)="$value.set($event)"
     [$initialLanguage]="'json'"
@@ -10,15 +11,12 @@
       slot="topcontrols"
       class="grow inline-flex gap-2 justify-between items-center ps-1"
     >
-      <input
+      <app-path-input
+        class="grow"
         [title]="
           'The storage key name, as a path, to help you know which is being exhibited in editor. i.e: \'/sessionStorage/language\''
         "
-        class="grow mt-[2px] text-[12px] text-neutral-400 border-0 px-2 py-1 bg-(--monaco-editor-dark-bg-color)/50 rounded max-w-[40em]"
         placeholder="/..."
-        [spellcheck]="false"
-        autocorrect="off"
-        type="text"
         [readOnly]="true"
         [value]="
           !$selectedItem()

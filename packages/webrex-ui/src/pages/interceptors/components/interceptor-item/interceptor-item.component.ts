@@ -1,4 +1,5 @@
 import { Component, inject, input, signal } from '@angular/core';
+import { InterceptorDocument } from '@webrex/contracts';
 import {
   ApiResponse,
   DsButtonComponent,
@@ -6,7 +7,6 @@ import {
   DsMenuOptionComponent,
   LoadingDirective,
 } from 'src/shared';
-import { InterceptorDocument } from '../../models';
 import { InterceptorsService } from '../../interceptors.service';
 
 @Component({
@@ -32,7 +32,7 @@ export class InterceptorItemComponent {
   }>();
 
   async toggleInterceptor(
-    i: Parameters<InterceptorsService['toggleInterceptor']>[0]
+    i: Parameters<InterceptorsService['toggleInterceptor']>[0],
   ): Promise<void> {
     this.$isToggling.set(true);
 

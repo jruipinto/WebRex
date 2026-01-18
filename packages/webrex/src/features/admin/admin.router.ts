@@ -1,12 +1,13 @@
+import process from 'node:process';
 import { Hono } from 'hono';
+import { firstValueFrom } from 'rxjs';
+import { NoSqlDBCollectionsNames } from '@core/database/no-sql-db.ts';
 import { InternalConfig } from '@core/config/internal-config.ts';
 import { adminService } from './admin.service.ts';
 import { handleAdminWebSocket } from './admin.gateway.ts';
-import process from 'node:process';
-import { NoSqlDBCollectionsNames } from "@core/database/no-sql-db.ts";
 
 export const adminRouter = async (conf: InternalConfig) => {
-  const db = await conf.db;
+  const db = await firstValueFrom(conf.db$);
   const app = new Hono();
 
   app.get('/exit', (c) => {
@@ -25,28 +26,46 @@ export const adminRouter = async (conf: InternalConfig) => {
   // Generic REST API
   app.get('/:entity/:id?', async (c) => {
     const { entity, id } = c.req.param();
-    const data = await adminService.getEntity(db, entity as NoSqlDBCollectionsNames, id);
+    const data = await adminService.getEntity(
+      db,
+      entity as NoSqlDBCollectionsNames,
+      id
+    );
     return c.json(data);
   });
 
   app.post('/:entity', async (c) => {
     const { entity } = c.req.param();
     const payload = await c.req.json();
-    const status = await adminService.createEntity(db, entity as NoSqlDBCollectionsNames, payload);
+    const status = await adminService.createEntity(
+      db,
+      entity as NoSqlDBCollectionsNames,
+      payload
+    );
     return c.json(status, status.ok ? 201 : 500);
   });
 
   app.put('/:entity/:id', async (c) => {
     const { entity, id } = c.req.param();
     const payload = await c.req.json();
-    const status = await adminService.updateEntity(db, entity as NoSqlDBCollectionsNames, id, payload);
+    const status = await adminService.updateEntity(
+      db,
+      entity as NoSqlDBCollectionsNames,
+      id,
+      payload
+    );
     return c.json(status, status.ok ? 201 : 500);
   });
 
   app.patch('/:entity/:id', async (c) => {
     const { entity, id } = c.req.param();
     const payload = await c.req.json();
-    const status = await adminService.patchEntity(db, entity as NoSqlDBCollectionsNames, id, payload);
+    const status = await adminService.patchEntity(
+      db,
+      entity as NoSqlDBCollectionsNames,
+      id,
+      payload
+    );
     return c.json(status, status.ok ? 201 : 500);
   });
 

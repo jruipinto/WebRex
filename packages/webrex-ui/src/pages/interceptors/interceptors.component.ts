@@ -1,6 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EditorComponent, DsButtonComponent } from 'src/shared';
+import {
+  EditorComponent,
+  DsButtonComponent,
+  PathInputComponent,
+} from 'src/shared';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InterceptorListComponent } from './components';
 import { InterceptorsService } from './interceptors.service';
@@ -15,6 +19,7 @@ import { InterceptorsService } from './interceptors.service';
     InterceptorListComponent,
     ReactiveFormsModule,
     DsButtonComponent,
+    PathInputComponent,
   ],
 })
 export class InterceptorsComponent {

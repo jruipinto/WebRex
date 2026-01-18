@@ -1,0 +1,13 @@
+{
+  "name": "@webrex/contracts",
+  "license": "AGPL-3.0-only",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "arktype": "^2.1.29",
+    "@types/node": "^20"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-rc.29",
+  "version": "2.0.0-rc.35",
   "license": "AGPL-3.0-only",
   "nodeModulesDir": "auto",
   "compilerOptions": {
@@ -10,11 +10,12 @@
   },
   "unstable": [
     "raw-imports",
+    "sloppy-imports",
     "kv"
   ],
   "tasks": {
     "start": "deno run -A src/main.ts",
-    "dev": "deno run -A --watch src/main.ts",
+    "dev": "deno run -A --watch src/main.ts --watch",
     "pack-ui": "deno run -A scripts/compress-static-assets.ts",
     "compile": "deno task pack-ui && deno compile --icon favicon.ico -A --include tmp  --output dist/WebRex src/main.ts"
   },
@@ -22,11 +23,12 @@
     "@core/": "./src/core/",
     "@features/": "./src/features/",
     "@middleware/": "./src/middleware/",
-    "@models/": "./src/models/",
+    "@models/": "../webrex-contracts/models/",
     "@deno/kv": "npm:@deno/kv@~0.13.0",
     "@hono/node-server": "npm:@hono/node-server@~1.19.7",
     "@ngrok/ngrok": "npm:@ngrok/ngrok@~1.7.0",
     "@olli/kvdex": "jsr:@olli/kvdex@~3.4.2",
+    "arktype": "npm:arktype@^2.1.29",
     "esbuild": "npm:esbuild@~0.25.10",
     "hono": "npm:hono@~4.11.3",
     "object-deep-compare": "npm:object-deep-compare",

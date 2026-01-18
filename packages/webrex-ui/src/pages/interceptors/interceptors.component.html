@@ -1,7 +1,7 @@
 <div class="flex gap-4 h-full max-[960px]:gap-10">
   <app-editor
     class="grow"
-    [$title]="'Interceptor:'"
+    [$title]="'Interceptor'"
     [value]="
       ((form.controls.codeTS.valueChanges | async) ??
         form.controls.codeTS.value) ||
@@ -14,16 +14,12 @@
       slot="topcontrols"
       class="grow inline-flex gap-2 justify-between items-center ps-1"
     >
-      <input
+      <app-path-input
+        class="grow"
         [title]="
           'Corresponds to the exact url.pathname to be intercepted, to allow to mutate that endpoint response. i.e: \'/api/v1/users\''
         "
-        class="grow mt-[2px] text-[12px] text-neutral-400 border-0 px-2 py-1 bg-(--monaco-editor-dark-bg-color)/50 rounded max-w-[40em]"
-        placeholder="/path..."
-        [spellcheck]="false"
-        autocorrect="off"
-        type="text"
-        [formControl]="form.controls.context"
+        [formControlRef]="form.controls.context"
       />
 
       <div>
@@ -31,28 +27,37 @@
           [title]="
             'Displays the interceptor hability to be executed in the proxy (enabled will be executed, disabled will not)'
           "
-          class="inline-flex gap-1 justify-between items-center text-[12px] font-semibold text-neutral-500 cursor-pointer me-2"
+          class="relative -top-[2px] inline-flex gap-1 justify-between items-center text-[12px] text-neutral-400 cursor-pointer p-1"
         >
           Enabled:
-          <div class="relative">
-            {{ (form.controls.enabled.valueChanges | async) ? '✅' : '⬛' }}
-            <input
-              class="opacity-0 absolute top-0 left-0 w-full h-full"
-              type="checkbox"
-              [formControl]="form.controls.enabled"
-            />
-          </div>
+          <span class="material-symbol text-base me-1">{{
+            (form.controls.enabled.valueChanges | async)
+              ? 'check_box'
+              : 'check_box_outline_blank'
+          }}</span>
+
+          <input
+            class="opacity-0 absolute size-0"
+            type="checkbox"
+            [formControl]="form.controls.enabled"
+          />
         </label>
         <ds-button
           [title]="'Empty all editor content'"
-          (click)="form.controls.codeTS.setValue('')"
-          >🧹Clean</ds-button
+          (click)="
+            form.reset({
+              codeTS: '',
+            })
+          "
+          ><span class="material-symbol text-base me-1">cleaning_services</span
+          >Clean</ds-button
         >
         <ds-button
           [title]="'Save interceptor'"
           (click)="save(null)"
           [$isLoading]="$isSaving()"
-          >💾 Save</ds-button
+          ><span class="material-symbol text-base me-1">save</span>
+          Save</ds-button
         >
       </div>
     </div>

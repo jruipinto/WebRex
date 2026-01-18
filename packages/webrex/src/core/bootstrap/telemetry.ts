@@ -7,7 +7,19 @@ export async function startTelemetry({ db }: { db: NoSqlDB }) {
   const origLog = console.log;
   console.log = async (...args) => {
     const msg = args
-      .map((i) => (typeof i === 'string' ? i : tryToStringify(i)))
+      .map((i) => {
+        if (typeof i === 'string') {
+          return i;
+        }
+        if (i instanceof Error) {
+          return tryToStringify({
+            name: i.name,
+            message: i.message,
+            stack: i.stack?.split('\n'),
+          });
+        }
+        return tryToStringify(i);
+      })
       .join(' ')
       .trim()
       .slice(0, 4095); // avoids overflow

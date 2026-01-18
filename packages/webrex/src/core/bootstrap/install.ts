@@ -1,8 +1,8 @@
 import { join } from 'node:path';
 import { WEB_UI_PATH } from '@core/config/constants/app.constants.ts';
-import { InternalConfig } from '@core/config/internal-config.ts';
-import { AppInfoDocument } from '@models/app-info-document.ts';
+import { NoSqlDB } from '@core/database/no-sql-db.ts';
 import { ensureDir } from '@core/utils/fs-extra.ts';
+import { AppInfoDocument } from '@models/app-info-document.ts';
 import { extract } from 'tar';
 import denoJson from '../../../deno.json' with { type: 'json' };
 
@@ -10,9 +10,7 @@ import denoJson from '../../../deno.json' with { type: 'json' };
  * Instals the required static files in user folder, on first run of the **compiled** app.
  * Does nothing, otherwise;
  */
-export async function install(
-  db: Awaited<InternalConfig['db']>
-): Promise<void> {
+export async function install({ db }: { db: NoSqlDB }): Promise<void> {
   const appInfoDocument = await db.appinfo.getOne();
 
   const isVersionAlreadyInstalled =
@@ -27,14 +25,7 @@ export async function install(
   await ensureDir(WEB_UI_PATH);
 
   await extract({
-    file: join(
-      import.meta.dirname!,
-      '..',
-      '..',
-      '..',
-      'tmp',
-      'web-ui.tar.gz'
-    ),
+    file: join(import.meta.dirname!, '..', '..', '..', 'tmp', 'web-ui.tar.gz'),
     cwd: WEB_UI_PATH,
   });
 

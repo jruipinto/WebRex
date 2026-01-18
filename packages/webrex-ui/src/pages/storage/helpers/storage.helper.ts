@@ -26,12 +26,12 @@ export const setSessionStorageValueScript = (
   key: string,
   value: string
 ) => /*ts*/ `
-sessionStorage.setItem("${key}", "${value}")
+sessionStorage.setItem("${key}", ${value})
 `;
 
 export const setLocalStorageValueScript = (
   key: string,
   value: string
 ) => /*ts*/ `
-localStorage.setItem("${key}", "${value}")
+localStorage.setItem("${key}", ${value})
 `;

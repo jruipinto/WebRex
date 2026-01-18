@@ -8,7 +8,7 @@ import { Context, Next } from 'hono';
 export const pathSanitizer = async (c: Context, next: Next) => {
   const { pathname } = new URL(c.req.url);
 
-  if (pathname.includes('/.well-known/') || pathname.includes('/sm/')) {
+  if (pathname.includes('/.well-known/') || pathname.includes('/sm/') || pathname.includes('/remote-types/')) {
     return c.json({ status: 'Not found' }, 404);
   }
 

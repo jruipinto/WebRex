@@ -19,7 +19,7 @@ app.use('*', pathSanitizer); // Block unwanted paths early
 // --- THE ROUTES (Modular responsibility) ---
 app.route('/webrex-api', await adminRouter(conf));
 app.route('/webrex-ui', uiRouter(conf));
-app.route('*', proxyRouter(conf)); // The proxy engine is inside here
+app.route('/', proxyRouter(conf)); // The proxy engine is inside here
 
 // Universal Bootstrapper: Deno.serve / Bun.serve / Node
 bootstrap({ conf, app });

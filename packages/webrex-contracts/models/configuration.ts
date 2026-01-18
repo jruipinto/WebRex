@@ -36,15 +36,23 @@ export class ProxyRoute {
    * }
    * ```
    *
-   * @example For file targets:
+   * @example For file targets in Windows:
    * ```ts
    * {
    *   context: '/my-built-app',
-   *   target: 'file:///my/full/path/myapp/dist'
+   *   target: 'file://C:/Users/jack/myapp/dist'
+   * }
+   * ```
+   *
+   * @example For file targets in Posix (linux, mac...):
+   * ```ts
+   * {
+   *   context: '/my-built-app',
+   *   target: 'file://my/full/path/myapp/dist'
    * }
    * ```
    */
-  target!: `${'https://' | 'http://' | 'file:///'}${string}`;
+  target!: `${'https://' | 'http://' | 'file://'}${string}`;
   /** Optional way to disabled a redirect, in case you want to keep a proxy but not use it */
   disabled?: boolean;
 

@@ -1,9 +1,8 @@
 // deno-lint-ignore-file no-window-prefix no-window no-window-prefix no-window-prefix
-// @ts-nocheck (Optional: if Deno globals still conflict)
 
 import type { Subject } from 'rxjs';
 import type { RealtimeEvent } from '@core/bootstrap/realtime.stream.ts';
-import type { RepliDocument } from '@core/database/no-sql-db.ts';
+import type { ReplOutputDocument } from '@models/repl-output-document.ts';
 
 declare global {
   interface XMLHttpRequest {
@@ -49,6 +48,14 @@ declare global {
   var webRexWs: Subject<RealtimeEvent | RealtimeEvent['data']>;
 }
 
+function getUnsafeRandomUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 const script = document.createElement('script');
 script.src = '/webrex-ui/assets/rxjs.umd.min.js';
 script.onload = () => {
@@ -61,14 +68,26 @@ script.onload = () => {
     const original = console[method];
     console[method] = function (...args) {
       const msg = args
-        .map((i) => (typeof i === 'string' ? i : tryToStringify(i)))
+        .map((i) => {
+          if (typeof i === 'string') {
+            return i;
+          }
+          if (i instanceof Error) {
+            return tryToStringify({
+              name: i.name,
+              message: i.message,
+              stack: i.stack?.split('\n'),
+            });
+          }
+          return tryToStringify(i);
+        })
         .join(' ')
         .trim();
 
       // send log to WebRex backend via websocket connection
       window.webRexWs.next({
         type: 'POST',
-        correlationId: crypto.randomUUID(),
+        correlationId: crypto.randomUUID?.() ?? getUnsafeRandomUUID(),
         data: {
           entity: 'weblogs',
           payload: msg,
@@ -79,31 +98,22 @@ script.onload = () => {
     };
   });
 
-  const compressToBase64 = async (data: string): Promise<string> => {
-    const stream = new Blob([data])
-      .stream()
-      .pipeThrough(new CompressionStream('gzip'));
-    const buffer = await new Response(stream).arrayBuffer();
-    // Use a modern approach to avoid atob/btoa character issues
-    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-  };
-
   // mandatory subscribe to start websocket connection
-  window.webRexWs.subscribe(async (message) => {
-    const payload = message?.data?.data?.payload as RepliDocument;
+  window.webRexWs.subscribe((message) => {
+    const payload = message?.data?.data?.payload as ReplOutputDocument;
     if (
       !(
         message?.type === 'realtimechanges' &&
         message?.data?.data?.entity === 'reploutput' &&
         message?.data?.data?.id &&
-        !payload?.result
+        !Object.hasOwn(payload, 'result')
       )
     ) {
       return;
     }
     const result = () => {
       try {
-        return compressToBase64(tryToStringify(window.eval(payload?.codeJS)));
+        return tryToStringify(window.eval(payload?.codeJS));
       } catch (error) {
         console.error(error);
       }
@@ -112,15 +122,15 @@ script.onload = () => {
     // send evaluation result back to WebRex backend via websocket connection
     window.webRexWs.next({
       type: 'PUT',
-      correlationId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID?.() ?? getUnsafeRandomUUID(),
       data: {
         id: message?.data?.data?.id,
         entity: 'reploutput',
         payload: {
           codeJS: payload?.codeJS,
           codeTS: payload?.codeTS,
-          result: await result(),
-        } as RepliDocument,
+          result: result() ?? ' ',
+        } as ReplOutputDocument,
       },
     } satisfies RealtimeEvent['data']);
   });
