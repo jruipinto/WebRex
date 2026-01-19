@@ -1,7 +1,6 @@
-
-import { InternalConfig } from "@core/config/internal-config.ts";
 import { logDifferences } from './log-differences.ts';
 import { ResponseInterceptor } from './response-interceptor.model.ts';
+import { NoSqlDB } from '@core/database/no-sql-db.ts';
 // keep this import as namespace to guarantee that the whole fs is imported
 // so that compiled app has access to all tools when running factories from snippets folder
 // import * as fs from 'node:fs';
@@ -18,7 +17,7 @@ export async function intercept(
   pathname: string,
   response: Response,
   config: WebRexConfiguration,
-  db: Awaited<InternalConfig['db']>
+  db: NoSqlDB
 ): Promise<Response> {
   const responseInterceptorFn = await getInterceptor(pathname, config, db);
 
@@ -48,7 +47,7 @@ export async function intercept(
 async function getInterceptor(
   pathname: string,
   config: WebRexConfiguration,
-  db: Awaited<InternalConfig['db']>
+  db: NoSqlDB
 ): Promise<ResponseInterceptor | null> {
   const interceptorTemplate = (
     await db.interceptors.getOne({
