@@ -1,0 +1,261 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@olli/kvdex@~3.4.2": "3.4.2",
+    "jsr:@std/bytes@^1.0.4": "1.0.6",
+    "jsr:@std/cli@1.0.12": "1.0.12",
+    "jsr:@std/collections@^1.0.9": "1.1.3",
+    "jsr:@std/ulid@1": "1.0.0",
+    "npm:@deno/kv@0.13": "0.13.0",
+    "npm:@hono/node-server@~1.19.7": "1.19.8_hono@4.11.3",
+    "npm:@ngrok/ngrok@1.7": "1.7.0",
+    "npm:arktype@^2.1.29": "2.1.29",
+    "npm:hono@~4.11.3": "4.11.3",
+    "npm:object-deep-compare@*": "2.0.0",
+    "npm:qrcode-terminal@0.12": "0.12.0",
+    "npm:rxjs@~7.8.2": "7.8.2",
+    "npm:tar@~7.5.2": "7.5.2",
+    "npm:zod@^3.24.0": "3.25.76"
+  },
+  "jsr": {
+    "@olli/kvdex@3.4.2": {
+      "integrity": "ab830819efc3a6e7024f865e0743f381dc8b57f63f0a3e590fe1e24ef17847a7",
+      "dependencies": [
+        "jsr:@std/bytes",
+        "jsr:@std/cli",
+        "jsr:@std/collections",
+        "jsr:@std/ulid",
+        "npm:zod"
+      ]
+    },
+    "@std/bytes@1.0.6": {
+      "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
+    },
+    "@std/cli@1.0.12": {
+      "integrity": "e5cfb7814d189da174ecd7a34fbbd63f3513e24a1b307feb2fcd5da47a070d90"
+    },
+    "@std/collections@1.1.3": {
+      "integrity": "bf8b0818886df6a32b64c7d3b037a425111f28278d69fd0995aeb62777c986b0"
+    },
+    "@std/ulid@1.0.0": {
+      "integrity": "d41c3d27a907714413649fee864b7cde8d42ee68437d22b79d5de4f81d808780"
+    }
+  },
+  "npm": {
+    "@ark/schema@0.56.0": {
+      "integrity": "sha512-ECg3hox/6Z/nLajxXqNhgPtNdHWC9zNsDyskwO28WinoFEnWow4IsERNz9AnXRhTZJnYIlAJ4uGn3nlLk65vZA==",
+      "dependencies": [
+        "@ark/util"
+      ]
+    },
+    "@ark/util@0.56.0": {
+      "integrity": "sha512-BghfRC8b9pNs3vBoDJhcta0/c1J1rsoS1+HgVUreMFPdhz/CRAKReAu57YEllNaSy98rWAdY1gE+gFup7OXpgA=="
+    },
+    "@deno/kv-darwin-arm64@0.13.0": {
+      "integrity": "sha512-yKYaanxbT5xo/Vfempgt2klZVFf3P/dFYOkJqaerwBS020WLziJpjb9N5cmmT63btaT8dZX0df0a/xUH0INdQw==",
+      "os": ["darwin"],
+      "cpu": ["arm64"]
+    },
+    "@deno/kv-darwin-x64@0.13.0": {
+      "integrity": "sha512-xDZF0boT0EabY92+VoArV0bHighpTVP5svKf6CYL/EuOxTHXXyOvkMlpPjWKTKv0F80gxxTGGowWIjMaMrAiUw==",
+      "os": ["darwin"],
+      "cpu": ["x64"]
+    },
+    "@deno/kv-linux-x64-gnu@0.13.0": {
+      "integrity": "sha512-zDEG02D2FT2VkNpMKwt5umUdepb2VVxp0PRKSIgHoo6bIbSQGJ1SmtJYV/4QbdwRFBuZyitioOJpeG2OPZCd5Q==",
+      "os": ["linux"],
+      "cpu": ["x64"]
+    },
+    "@deno/kv-win32-x64-msvc@0.13.0": {
+      "integrity": "sha512-yNAtCBc878WlMtnHZD0zjHx72+zJi5f/L7KmiW4rykunmv/5xLWZnOH49L05HWSRhIj2fxzL9slZPIayxfwUSg==",
+      "os": ["win32"],
+      "cpu": ["x64"]
+    },
+    "@deno/kv@0.13.0": {
+      "integrity": "sha512-RO1zn9JFePB2kScM2zHBKeDRvdBK0PRsJwzN21hVuqzzmjrJeKgKdaojBElXavPknNqRzU4FsGCzuk93LuJawA==",
+      "optionalDependencies": [
+        "@deno/kv-darwin-arm64",
+        "@deno/kv-darwin-x64",
+        "@deno/kv-linux-x64-gnu",
+        "@deno/kv-win32-x64-msvc"
+      ]
+    },
+    "@hono/node-server@1.19.8_hono@4.11.3": {
+      "integrity": "sha512-0/g2lIOPzX8f3vzW1ggQgvG5mjtFBDBHFAzI5SFAi2DzSqS9luJwqg9T6O/gKYLi+inS7eNxBeIFkkghIPvrMA==",
+      "dependencies": [
+        "hono"
+      ]
+    },
+    "@isaacs/fs-minipass@4.0.1": {
+      "integrity": "sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==",
+      "dependencies": [
+        "minipass"
+      ]
+    },
+    "@ngrok/ngrok-android-arm64@1.7.0": {
+      "integrity": "sha512-8tco3ID6noSaNy+CMS7ewqPoIkIM6XO5COCzsUp3Wv3XEbMSyn65RN6cflX2JdqLfUCHcMyD0ahr9IEiHwqmbQ==",
+      "os": ["android"],
+      "cpu": ["arm64"]
+    },
+    "@ngrok/ngrok-darwin-arm64@1.7.0": {
+      "integrity": "sha512-+dmJSOzSO+MNDVrPOca2yYDP1W3KfP4qOlAkarIeFRIfqonQwq3QCBmcR7HAlZocLsSqEwyG6KP4RRvAuT0WGQ==",
+      "os": ["darwin"],
+      "cpu": ["arm64"]
+    },
+    "@ngrok/ngrok-darwin-universal@1.7.0": {
+      "integrity": "sha512-fDEfewyE2pWGFBhOSwQZObeHUkc65U1l+3HIgSOe094TMHsqmyJD0KTCgW9KSn0VP4OvDZbAISi1T3nvqgZYhQ==",
+      "os": ["darwin"]
+    },
+    "@ngrok/ngrok-darwin-x64@1.7.0": {
+      "integrity": "sha512-+fwMi5uHd9G8BS42MMa9ye6exI5lwTcjUO6Ut497Vu0qgLONdVRenRqnEePV+Q3KtQR7NjqkMnomVfkr9MBjtw==",
+      "os": ["darwin"],
+      "cpu": ["x64"]
+    },
+    "@ngrok/ngrok-freebsd-x64@1.7.0": {
+      "integrity": "sha512-2OGgbrjy3yLRrqAz5N6hlUKIWIXSpR5RjQa2chtZMsSbszQ6c9dI+uVQfOKAeo05tHMUgrYAZ7FocC+ig0dzdQ==",
+      "os": ["freebsd"],
+      "cpu": ["x64"]
+    },
+    "@ngrok/ngrok-linux-arm-gnueabihf@1.7.0": {
+      "integrity": "sha512-SN9YIfEQiR9xN90QVNvdgvAemqMLoFVSeTWZs779145hQMhvF9Qd9rnWi6J+2uNNK10OczdV1oc/nq1es7u/3g==",
+      "os": ["linux"],
+      "cpu": ["arm"]
+    },
+    "@ngrok/ngrok-linux-arm64-gnu@1.7.0": {
+      "integrity": "sha512-KDMgzPKFU2kbpVSaA2RZBBia5IPdJEe063YlyVFnSMJmPYWCUnMwdybBsucXfV9u1Lw/ZjKTKotIlbTWGn3HGw==",
+      "os": ["linux"],
+      "cpu": ["arm64"]
+    },
+    "@ngrok/ngrok-linux-arm64-musl@1.7.0": {
+      "integrity": "sha512-e66vUdVrBlQ0lT9ZdamB4U604zt5Gualt8/WVcUGzbu8s5LajWd6g/mzZCUjK4UepjvMpfgmCp1/+rX7Rk8d5A==",
+      "os": ["linux"],
+      "cpu": ["arm64"]
+    },
+    "@ngrok/ngrok-linux-x64-gnu@1.7.0": {
+      "integrity": "sha512-M6gF0DyOEFqXLfWxObfL3bxYZ4+PnKBHuyLVaqNfFN9Y5utY2mdPOn5422Ppbk4XoIK5/YkuhRqPJl/9FivKEw==",
+      "os": ["linux"],
+      "cpu": ["x64"]
+    },
+    "@ngrok/ngrok-linux-x64-musl@1.7.0": {
+      "integrity": "sha512-4Ijm0dKeoyzZTMaYxR2EiNjtlK81ebflg/WYIO1XtleFrVy4UJEGnxtxEidYoT4BfCqi4uvXiK2Mx216xXKvog==",
+      "os": ["linux"],
+      "cpu": ["x64"]
+    },
+    "@ngrok/ngrok-win32-arm64-msvc@1.7.0": {
+      "integrity": "sha512-u7qyWIJI2/YG1HTBnHwUR1+Z2tyGfAsUAItJK/+N1G0FeWJhIWQvSIFJHlaPy4oW1Dc8mSDBX9qvVsiQgLaRFg==",
+      "os": ["win32"],
+      "cpu": ["arm64"]
+    },
+    "@ngrok/ngrok-win32-ia32-msvc@1.7.0": {
+      "integrity": "sha512-/UdYUsLNv/Q8j9YJsyIfq/jLCoD8WP+NidouucTUzSoDtmOsXBBT3itLrmPiZTEdEgKiFYLuC1Zon8XQQvbVLA==",
+      "os": ["win32"],
+      "cpu": ["ia32"]
+    },
+    "@ngrok/ngrok-win32-x64-msvc@1.7.0": {
+      "integrity": "sha512-UFJg/duEWzZlLkEs61Gz6/5nYhGaKI62I8dvUGdBR3NCtIMagehnFaFxmnXZldyHmCM8U0aCIFNpWRaKcrQkoA==",
+      "os": ["win32"],
+      "cpu": ["x64"]
+    },
+    "@ngrok/ngrok@1.7.0": {
+      "integrity": "sha512-P06o9TpxrJbiRbHQkiwy/rUrlXRupc+Z8KT4MiJfmcdWxvIdzjCaJOdnNkcOTs6DMyzIOefG5tvk/HLdtjqr0g==",
+      "optionalDependencies": [
+        "@ngrok/ngrok-android-arm64",
+        "@ngrok/ngrok-darwin-arm64",
+        "@ngrok/ngrok-darwin-universal",
+        "@ngrok/ngrok-darwin-x64",
+        "@ngrok/ngrok-freebsd-x64",
+        "@ngrok/ngrok-linux-arm-gnueabihf",
+        "@ngrok/ngrok-linux-arm64-gnu",
+        "@ngrok/ngrok-linux-arm64-musl",
+        "@ngrok/ngrok-linux-x64-gnu",
+        "@ngrok/ngrok-linux-x64-musl",
+        "@ngrok/ngrok-win32-arm64-msvc",
+        "@ngrok/ngrok-win32-ia32-msvc",
+        "@ngrok/ngrok-win32-x64-msvc"
+      ]
+    },
+    "arkregex@0.0.5": {
+      "integrity": "sha512-ncYjBdLlh5/QnVsAA8De16Tc9EqmYM7y/WU9j+236KcyYNUXogpz3sC4ATIZYzzLxwI+0sEOaQLEmLmRleaEXw==",
+      "dependencies": [
+        "@ark/util"
+      ]
+    },
+    "arktype@2.1.29": {
+      "integrity": "sha512-jyfKk4xIOzvYNayqnD8ZJQqOwcrTOUbIU4293yrzAjA3O1dWh61j71ArMQ6tS/u4pD7vabSPe7nG3RCyoXW6RQ==",
+      "dependencies": [
+        "@ark/schema",
+        "@ark/util",
+        "arkregex"
+      ]
+    },
+    "chownr@3.0.0": {
+      "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g=="
+    },
+    "hono@4.11.3": {
+      "integrity": "sha512-PmQi306+M/ct/m5s66Hrg+adPnkD5jiO6IjA7WhWw0gSBSo1EcRegwuI1deZ+wd5pzCGynCcn2DprnE4/yEV4w=="
+    },
+    "minipass@7.1.2": {
+      "integrity": "sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw=="
+    },
+    "minizlib@3.1.0": {
+      "integrity": "sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==",
+      "dependencies": [
+        "minipass"
+      ]
+    },
+    "object-deep-compare@2.0.0": {
+      "integrity": "sha512-bIu+4D1j36NtcclajmXyhReqNx3xicvaSHZgNYEnIVI3g+5ksPwQVqBFHmDK/9FeDL2cNNQHrM01fFKzWcgqIQ=="
+    },
+    "qrcode-terminal@0.12.0": {
+      "integrity": "sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==",
+      "bin": true
+    },
+    "rxjs@7.8.2": {
+      "integrity": "sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==",
+      "dependencies": [
+        "tslib"
+      ]
+    },
+    "tar@7.5.2": {
+      "integrity": "sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==",
+      "dependencies": [
+        "@isaacs/fs-minipass",
+        "chownr",
+        "minipass",
+        "minizlib",
+        "yallist"
+      ],
+      "deprecated": true
+    },
+    "tslib@2.8.1": {
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
+    },
+    "yallist@5.0.0": {
+      "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw=="
+    },
+    "zod@3.25.76": {
+      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="
+    }
+  },
+  "remote": {
+    "https://deno.land/x/denoflate@1.2.1/mod.ts": "f5628e44b80b3d80ed525afa2ba0f12408e3849db817d47a883b801f9ce69dd6",
+    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js": "b9f9ad9457d3f12f28b1fb35c555f57443427f74decb403113d67364e4f2caf4",
+    "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",
+    "https://deno.land/x/esbuild@v0.27.1/mod.js": "d54fbb416d6559fb1daf15cb06747f1c3486a86f2da1601b147b6a51d78f051f",
+    "https://deno.land/x/esbuild@v0.27.3/wasm.js": "a41638339b5a3ea5afa79ead03405e18eb9c7b31888244917523b5cb82141243"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@olli/kvdex@~3.4.2",
+      "npm:@deno/kv@0.13",
+      "npm:@hono/node-server@~1.19.7",
+      "npm:@ngrok/ngrok@1.7",
+      "npm:arktype@^2.1.29",
+      "npm:hono@~4.11.3",
+      "npm:object-deep-compare@*",
+      "npm:qrcode-terminal@0.12",
+      "npm:rxjs@~7.8.2",
+      "npm:tar@~7.5.2"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+<app-editor
+  class="grow"
+  [$title]="'Settings'"
+  [value]="(settings$ | async) ?? ''"
+  (valueChange)="$unsavedConfig.set($event)"
+  (keydown)="saveSettings($event)"
+  [$isLoading]="$isLoading() || $isFetching()"
+>
+  <div
+    slot="topcontrols"
+    class="grow inline-flex justify-end items-center ps-1"
+  >
+    <app-import-button
+      (importSuccess)="forceRefreshSubject.next($event)"
+    ></app-import-button>
+    <app-export-button></app-export-button>
+    <ds-button
+      [title]="'Save WebRex configuration\'s changes'"
+      [$isLoading]="$isSaving()"
+      (click)="saveSettings(null)"
+      ><span class="material-symbol text-base me-1">save</span> Save</ds-button
+    >
+  </div>
+</app-editor>

@@ -1,0 +1,44 @@
+<div class="flex gap-4 justify-between items-center">
+  @let name = nodeInput().name;
+  <div [title]="name" class="text-xs truncate">
+    {{ name }}
+  </div>
+  <div class="min-w-fit">
+    <ds-button
+      class="relative top-[1px]"
+      [title]="'Enable/Disable interceptor'"
+      [$variant]="'small'"
+      [$isLoading]="$isToggling()"
+      (click)="toggleInterceptor(nodeInput().value)"
+    >
+      <span class="material-symbol me-1">{{
+        nodeInput().value.value.enabled
+          ? 'check_box'
+          : 'check_box_outline_blank'
+      }}</span>
+      Toggle</ds-button
+    >
+
+    <ds-menu
+      [title]="'More options'"
+      [$variant]="'small-fab'"
+      [$label]="'⋮'"
+      [showSpinner]="$isDeleting()"
+    >
+      <ds-menu-option
+        [title]="'Open interceptor in the editor'"
+        value="view"
+        (optionSelect)="open(nodeInput().value)"
+      >
+        <span class="material-symbol text-base me-1">visibility</span> View
+      </ds-menu-option>
+      <ds-menu-option
+        [title]="'Delete snippet forever'"
+        value="delete"
+        (optionSelect)="delete(nodeInput().value)"
+      >
+        <span class="material-symbol text-base me-1">delete</span> Delete
+      </ds-menu-option>
+    </ds-menu>
+  </div>
+</div>

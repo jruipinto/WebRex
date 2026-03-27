@@ -1,0 +1,50 @@
+<aside
+  [class]="
+    !$isSmallScreen()
+      ? 'h-full'
+      : 'z-10 absolute right-0 -top-4 -bottom-4 bg-neutral-800 ps-4 border-l border-neutral-700 pt-4 shadow-lg'
+  "
+>
+  <div class="flex justify-between">
+    <header
+      [class]="
+        $isExpanded()
+          ? 'block font-medium text-neutral-400'
+          : 'block font-medium text-neutral-400 mt-8 -mr-3 [writing-mode:vertical-rl]'
+      "
+    >
+      {{ $header() }}
+    </header>
+    <ds-button
+      class="absolute -right-3"
+      [title]="'Expand/Collapse sidebar'"
+      [$variant]="'regular-fab'"
+      (click)="$isExpanded.set(!$isExpanded())"
+    >
+      <span
+        [class]="
+          'material-symbol text-lg relative ' + ($isExpanded() ? '' : 'rotate-180')
+        "
+      >
+        expand_circle_right
+      </span>
+    </ds-button>
+  </div>
+  <div
+    [class.hidden]="!$isExpanded()"
+    class="grid content-start gap-1 ps-[1px] mt-2 max-h-[85dvh] h-full pe-1 -me-2 overflow-y-auto min-w-[24em] [scrollbar-gutter:stable]"
+  >
+    <app-search-input
+      class="w-full sticky top-0 left-0 z-1"
+      [title]="'Filter the snippets conveniently'"
+      [(value)]="$searchValue"
+    ></app-search-input>
+
+    <ds-tree
+      [$flatNodes]="$flatNodes()"
+      [$isLoading]="$isLoading()"
+      [$treeItemTemplateRef]="$treeItemTemplateRef()"
+    >
+    </ds-tree>
+  </div>
+</aside>

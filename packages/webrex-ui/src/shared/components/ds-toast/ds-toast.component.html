@@ -1,0 +1,6 @@
+<div [class]="$variantStyles()">
+  <span class="material-symbol text-base">{{
+    $variant() === 'success' ? 'check' : 'block'
+  }}</span>
+  {{ $message() }}
+</div>

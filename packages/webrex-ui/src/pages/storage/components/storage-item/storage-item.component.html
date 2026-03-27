@@ -1,0 +1,11 @@
+<div class="flex gap-4 justify-between items-center">
+  @let name = nodeInput().name;
+  <div
+    [title]="name"
+    class="text-xs truncate cursor-pointer h-full w-full"
+    [showSpinner]="$isReading()"
+    (click)="read(nodeInput().value)"
+  >
+    {{ name }}
+  </div>
+</div>

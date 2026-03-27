@@ -1,0 +1,14 @@
+<nav
+  class="block text-[10px] font-semibold text-neutral-500 -mx-4 py-2 px-3 mb-4 border-b border-neutral-700"
+>
+  @for (route of routes; track route) {
+    <a
+      [routerLink]="route.path"
+      [title]="route.help"
+      routerLinkActive="text-neutral-400"
+      class="hover:bg-neutral-700 me-1 p-1 rounded"
+      >{{ route.label }}</a
+    >
+  }
+</nav>
+<router-outlet> </router-outlet>

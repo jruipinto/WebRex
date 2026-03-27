@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  height: 92dvh;
+  overflow: hidden;
+
+  --monaco-editor-dark-bg-color: rgb(30, 30, 30);
+}
+
+.editor-wrapper {
+  height: calc(100% - 34px);
+  position: relative;
+}

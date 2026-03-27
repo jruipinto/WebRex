@@ -1,0 +1,120 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "1e1de97b-a744-405a-8b5a-0397bb3d01ce",
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "webrex-ui": {
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "configurations": {
+            "development": {
+              "extractLicenses": false,
+              "namedChunks": true,
+              "optimization": false,
+              "sourceMap": true,
+              "outputHashing": "all"
+            },
+            "production": {
+              "aot": true,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false
+            }
+          },
+          "options": {
+            "assets": [
+              "src/manifest.json",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor",
+                "output": "assets/monaco/"
+              },
+              {
+                "glob": "**/*",
+                "input": "../../node_modules/monaco-editor",
+                "output": "assets/monaco/"
+              },
+              {
+                "glob": "esbuild.wasm",
+                "input": "node_modules/esbuild-wasm/",
+                "output": "assets/"
+              },
+              {
+                "glob": "rxjs.umd.min.js",
+                "input": "node_modules/rxjs/dist/bundles/",
+                "output": "assets/"
+              }
+            ],
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "outputPath": "dist",
+            "polyfills": [],
+            "scripts": [],
+            "styles": [
+              "src/global_styles.css"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "deployUrl": "/webrex-ui/",
+            "baseHref": "/webrex-ui/"
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "development": {
+              "port": 4300,
+              "buildTarget": "webrex-ui:build:development"
+            },
+            "production": {
+              "buildTarget": "webrex-ui:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      },
+      "prefix": "app",
+      "projectType": "application",
+      "root": "",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "css"
+        }
+      },
+      "sourceRoot": "src"
+    }
+  },
+  "version": 1,
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
+  }
+}

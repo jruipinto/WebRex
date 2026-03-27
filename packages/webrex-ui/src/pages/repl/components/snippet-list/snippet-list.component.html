@@ -1,0 +1,11 @@
+<app-editor-sidebar
+  [$header]="'Snippets'"
+  [($searchValue)]="$searchValue"
+  [$flatNodes]="$snippetsMapped()"
+  [$treeItemTemplateRef]="item"
+>
+</app-editor-sidebar>
+
+<ng-template #item let-node>
+  <app-snippet-item [nodeInput]="node"></app-snippet-item>
+</ng-template>

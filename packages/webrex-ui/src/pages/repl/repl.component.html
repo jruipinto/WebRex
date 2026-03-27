@@ -1,0 +1,65 @@
+<div class="flex gap-4 h-full max-[960px]:gap-10">
+  <app-editor
+    class="grow"
+    [$title]="'Snippet'"
+    [value]="
+      ((form.controls.codeTS.valueChanges | async) ??
+        form.controls.codeTS.value) ||
+      ''
+    "
+    (valueChange)="form.controls.codeTS.setValue($event)"
+    (keydown)="save($event)"
+  >
+    <div
+      slot="topcontrols"
+      class="grow inline-flex gap-2 justify-between items-center ps-1"
+    >
+      <app-path-input
+        class="grow"
+        [title]="'The name of the snippet, as a path, which allows to group snippets conveniently. i.e: \'/favorites/my-snippet.ts\''"
+        [formControlRef]="form.controls.context"
+      />
+
+      <div>
+        <ds-button
+          [title]="'Empty all editor content'"
+          (click)="
+            form.reset({
+              codeTS: '',
+            });
+            $id.set('')
+          "
+          ><span class="material-symbol text-base me-1">cleaning_services</span>
+          Clean</ds-button
+        >
+        <ds-button
+          [title]="'Copy the content of the snippet compiled as JS, to clipboard'"
+          [$isLoading]="$isCompilingJs()"
+          (click)="compileToJSAndCopyToClipboard(form.controls.codeTS.value)"
+          ><span class="material-symbol text-base me-1">deployed_code</span> Copy
+          JS</ds-button
+        >
+        <ds-button
+          [title]="'Run snippet in the proxied app'"
+          [$isLoading]="$isRunning()"
+          (click)="
+            run({
+              value: { codeTS: form.controls.codeTS.value },
+            })
+          "
+          ><span class="material-symbol text-base me-1">bolt</span>
+          Run</ds-button
+        >
+        <ds-button
+          [title]="'Save snippet'"
+          [$isLoading]="$isSaving()"
+          (click)="save(null)"
+          ><span class="material-symbol text-base me-1">save</span>
+          Save</ds-button
+        >
+      </div>
+    </div>
+  </app-editor>
+
+  <app-snippet-list></app-snippet-list>
+</div>

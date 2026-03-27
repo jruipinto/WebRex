@@ -1,0 +1,49 @@
+<div class="flex gap-4 h-full max-[960px]:gap-10">
+  <app-editor
+    class="grow"
+    [$title]="'Storage'"
+    [value]="$value()"
+    (valueChange)="$value.set($event)"
+    [$initialLanguage]="'json'"
+    (ready)="initStorageList()"
+  >
+    <div
+      slot="topcontrols"
+      class="grow inline-flex gap-2 justify-between items-center ps-1"
+    >
+      <app-path-input
+        class="grow"
+        [title]="
+          'The storage key name, as a path, to help you know which is being exhibited in editor. i.e: \'/sessionStorage/language\''
+        "
+        placeholder="/..."
+        [readOnly]="true"
+        [value]="
+          !$selectedItem()
+            ? ''
+            : '/' + $selectedItem()?.storageType + '/' + $selectedItem()?.key
+        "
+      />
+      <div>
+        <ds-button
+          [title]="'Read SessionStorage'"
+          [$isLoading]="$isLoading()"
+          (click)="refresh()"
+        >
+          <span class="material-symbol text-base me-1">directory_sync</span>
+          Refresh list
+        </ds-button>
+        <ds-button
+          [title]="'Save changes'"
+          [$isLoading]="$isSaving()"
+          (click)="writeItem($selectedItem(), $value())"
+        >
+          <span class="material-symbol text-base me-1">save</span>
+          Save
+        </ds-button>
+      </div>
+    </div>
+  </app-editor>
+
+  <app-storage-list [$isLoading]="$isLoading()"></app-storage-list>
+</div>

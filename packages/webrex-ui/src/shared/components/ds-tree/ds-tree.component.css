@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+/* Tree styles */
+
+[ngTree] {
+  min-width: 24rem;
+}
+
+[ngTreeItem] {
+  list-style: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 1);
+  border-radius: 0.2rem;
+  outline: 0;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-400);
+}
+
+[ngTreeItem]:focus-within,
+[ngTreeItem]:hover {
+  color: var(--color-neutral-100);
+  outline-offset: -2px;
+  outline: 1px dashed var(--color-neutral-700);
+}
+
+[ngTreeItem][aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.expand-icon {
+  transition: transform 0.2s ease;
+  user-select: none;
+  font-size: var(--text-base);
+}
+
+[ngTreeItem][aria-expanded='true'] .expand-icon {
+  transform: rotate(90deg);
+}
+
+.selected-icon {
+  visibility: hidden;
+  margin-left: auto;
+}
+
+[ngTreeItem][aria-current] .selected-icon,
+[ngTreeItem][aria-selected='true'] .selected-icon {
+  visibility: visible;
+}

@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'Material Symbols Sharp';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/material-symbols-sharp.woff2) format('woff2');
+}
+
+.material-symbol {
+  font-family: 'Material Symbols Sharp';
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  user-select: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add application styles & imports to this file! */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:root {
+  --monaco-editor-dark-bg-color: rgb(30, 30, 30);
+}
+
+/* <Loading Directive Styles> */
+.spinner-border {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+:disabled {
+  cursor: none;
+}
+
+/* <Loading Directive Styles /> */

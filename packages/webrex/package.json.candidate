@@ -1,0 +1,24 @@
+{
+    "explanation": "This file might be useful in future when, and if the runtime is changed from deno to bun or nodejs (because of desktop app plans)",
+    "name": "webrex",
+    "version": "0.0.0",
+    "license": "AGPL-3.0-only",
+    "type": "module",
+    "scripts": {
+        "start": "bun run src/main.ts",
+        "dev": "bun --watch src/main.ts",
+        "pre-compile": "bun run scripts/compress-static-assets.ts",
+        "compile": "bun run pre-compile && bun build ./src/main.ts --compile --outfile WebRex"
+    },
+    "dependencies": {
+        "@deno/kv": "~0.13.0",
+        "@hono/node-server": "~1.19.7",
+        "@ngrok/ngrok": "~1.7.0",
+        "@olli/kvdex": "npm:@jsr/olli__kvdex@^3.4.2",
+        "esbuild": "~0.25.10",
+        "hono": "~4.11.3",
+        "qrcode-terminal": "~0.12.0",
+        "rxjs": "~7.8.2",
+        "tar": "~7.5.2"
+    }
+}
