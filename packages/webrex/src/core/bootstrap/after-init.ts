@@ -8,15 +8,18 @@ export function afterInit(conf: InternalConfig) {
     const config = await firstValueFrom(conf.config$);
     console.log(`\nServer started at http://${config.hostname}:${port}`);
     console.log(
-      `WebRex UI running at http://${config.hostname}:${port}/webrex-ui`
+      `WebRex UI running at http://${config.hostname}:${port}/webrex-ui`,
     );
 
     // start and ngrok tunnel to allow sharing local instance with anyone, like QAs
     if (config.tunnelingEnabled && !Deno.args.includes('--watch')) {
-      ngrokConnect({
+      const ngrokOptions: Parameters<typeof ngrokConnect>[0] = {
         addr: `${config.hostname}:${port}`,
         authtoken: config.tunnelingToken,
-      })
+        domain: config.tunnelingDomain,
+      };
+      config.tunnelingDomain && (ngrokOptions.domain = config.tunnelingDomain);
+      ngrokConnect(ngrokOptions)
         .then((listener) => {
           console.log(`Tunnel established at: ${listener.url()}`);
           QrCode.generate(listener.url(), { small: true });
@@ -24,7 +27,7 @@ export function afterInit(conf: InternalConfig) {
         .catch((err: Error) => {
           console.log(
             'NgRok tunnel failed to start. Verify your token and errors.',
-            err
+            err,
           );
         });
     }

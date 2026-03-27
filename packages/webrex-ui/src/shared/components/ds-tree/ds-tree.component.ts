@@ -36,19 +36,19 @@ export class DsTreeComponent {
     mergeBranches(
       this.$flatNodes()
         .sort(byHierarchicalPath)
-        .map((node) => toTree(node))
-    )
+        .map((node) => toTree(node)),
+    ),
   );
 
-  $expandedIds = signal(new Set<string>());
+  $expandedPaths = signal(new Set<string>());
 
-  toggleExpanded(id: string): void {
-    this.$expandedIds.update((oldSet) => {
-      if (oldSet.has(id)) {
-        oldSet.delete(id);
+  toggleExpanded(path: string): void {
+    this.$expandedPaths.update((oldSet) => {
+      if (oldSet.has(path)) {
+        oldSet.delete(path);
         return oldSet;
       }
-      oldSet.add(id);
+      oldSet.add(path);
       return oldSet;
     });
   }

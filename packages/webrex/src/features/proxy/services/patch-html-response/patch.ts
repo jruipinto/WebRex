@@ -61,7 +61,7 @@ script.src = '/webrex-ui/assets/rxjs.umd.min.js';
 script.onload = () => {
   const rxjs = window.rxjs;
   window.webRexWs = window.rxjs.webSocket.webSocket(
-    'ws://localhost:3001/webrex-api/ws'
+    `${location.origin.replace('http', 'ws')}/webrex-api/ws`
   );
 
   (['log', 'error', 'warn', 'info'] as const).forEach((method) => {
@@ -229,6 +229,7 @@ const originalSend = XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.send = function (...args) {
   try {
     this.setRequestHeader('X-Origin', this.__trueOrigin ?? '');
+    this.setRequestHeader('ngrok-skip-browser-warning', 'true');
   } catch (_e) {
     // ignore if not allowed for some calls
   }
@@ -248,6 +249,7 @@ window.fetch = function (input, init) {
   const newInit = { ...(init ?? {}) } as RequestInit;
   newInit.headers = new Headers(newInit.headers ?? input.headers ?? {});
   newInit.headers.append('X-Origin', normalizedUrl.__trueOrigin ?? '');
+  newInit.headers.append('ngrok-skip-browser-warning', 'true');
   if (typeof input === 'string') {
     return originalFetch.call(this, normalizedUrl, newInit);
   } else {

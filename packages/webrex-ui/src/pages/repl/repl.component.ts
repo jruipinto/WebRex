@@ -23,6 +23,7 @@ import { ReplService } from './repl.service';
 export class ReplComponent {
   private readonly service = inject(ReplService);
   form = this.service.form;
+  $id = this.service.$id;
 
   $isRunning = signal(false);
   $isDeleting = signal(false);

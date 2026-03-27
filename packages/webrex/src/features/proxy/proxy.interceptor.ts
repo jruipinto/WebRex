@@ -14,12 +14,14 @@ export const proxyInterceptorMiddleware = (conf: InternalConfig) => {
 
     // --- BUSINESS RULES ---
     const isHtml = contentType?.includes('text/html');
+    const isJs = contentType?.includes('text/javascript');
+
     const isAsset = /\.\w+$/.test(url.pathname);
     const isSuccess = response.status >= 200 && response.status < 300;
 
     // Rule: Don't intercept assets or non-2xx status (unless forceMock is on)
     const config = await firstValueFrom(conf.config$);
-    if (isAsset || (!config.forceMock && !isSuccess)) {
+    if ((isAsset && !isHtml && !isJs) || (!config.forceMock && !isSuccess)) {
       return;
     }
 
@@ -28,7 +30,7 @@ export const proxyInterceptorMiddleware = (conf: InternalConfig) => {
     if (isHtml) {
       finalResponse = await patchHtmlResponses(
         response,
-        url.pathname.startsWith('/mf')
+        url.pathname.startsWith('/mf'),
       );
     }
 

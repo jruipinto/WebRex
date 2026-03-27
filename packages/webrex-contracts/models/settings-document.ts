@@ -18,6 +18,7 @@ const WebRexConfigurationSchema = type({
   'forceMock?': 'boolean',
   'mockpath?': 'string',
   'tunnelingToken?': 'string',
+  'tunnelingDomain?': 'string',
   'tunnelingEnabled?': 'boolean',
   proxy: ProxyRouteSchema.array(),
   'mockFromHAR?': ProxyRouteSchema,

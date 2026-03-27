@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { filter, Observable, shareReplay } from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket } from 'rxjs/webSocket';
 
 const HttpMethod = {
   GET: 'GET',
@@ -54,24 +54,25 @@ type Entity = (typeof Entity)[keyof typeof Entity];
 
 @Injectable({ providedIn: 'root' })
 export class RealtimeApiService {
-  #socket = webSocket<RealtimeChangesEvent>('ws://localhost:3001/webrex-api/ws');
+  #origin = window.location.origin.replace('http', 'ws');
+  #socket = webSocket<RealtimeChangesEvent>(`${this.#origin}/webrex-api/ws`);
   #realtimeChanges = this.#socket.pipe(
-    shareReplay({ refCount: true, bufferSize: 1 })
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
   /** DO NOT REMOVE `#keepAlive`, altough ide says it's not used. It is subscribing to keep ws connection alive */
   #keepAlive = this.#realtimeChanges.subscribe(); // we keep 1 subscription reference to keep websocket alive during this service lifetime
 
   executeRpc(
     procedureName: string,
-    procedureParams?: Record<string, unknown>
+    procedureParams?: Record<string, unknown>,
   ) {}
 
   watchEntity(entity: Entity): Observable<RealtimeChangesEvent> {
     return this.#realtimeChanges.pipe(
       filter(
         (evt) =>
-          evt.type === 'realtimechanges' && evt.data?.data?.entity === entity
-      )
+          evt.type === 'realtimechanges' && evt.data?.data?.entity === entity,
+      ),
     );
   }
 }

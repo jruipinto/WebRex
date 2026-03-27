@@ -46,4 +46,10 @@ export class SnippetItemComponent {
     await this.service.delete(i);
     this.$isDeleting.set(false);
   }
+
+  async duplicate(i: Parameters<ReplService['duplicate']>[0]): Promise<void> {
+    this.$isRunning.set(true);
+    await this.service.duplicate(i);
+    this.$isRunning.set(false);
+  }
 }

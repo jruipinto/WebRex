@@ -32,6 +32,13 @@
         <span class="material-symbol text-base me-1">visibility</span> View
       </ds-menu-option>
       <ds-menu-option
+        [title]="'Duplicate snippet'"
+        value="duplicate"
+        (optionSelect)="duplicate(nodeInput().value)"
+      >
+        <span class="material-symbol text-base me-1">file_copy</span> Duplicate
+      </ds-menu-option>
+      <ds-menu-option
         [title]="'Delete snippet forever'"
         value="delete"
         (optionSelect)="delete(nodeInput().value)"

@@ -17,15 +17,15 @@
   }
 </ul>
 <ng-template #treeNodes let-nodes="nodes" let-parent="parent">
-  @for (node of nodes; track node.value) {
+  @for (node of nodes; track node.path) {
     <li
       ngTreeItem
       [parent]="parent"
       [value]="node.value"
       [label]="node.name"
       [disabled]="node.disabled"
-      [expanded]="$expandedIds().has(node.value.id)"
-      (expandedChange)="toggleExpanded(node.value.id)"
+      [expanded]="$expandedPaths().has(node.path)"
+      (expandedChange)="toggleExpanded(node.path)"
       [class.cursor-pointer]="node.children"
       #treeItem="ngTreeItem"
     >
@@ -41,7 +41,7 @@
           !node.children ? 'docs' : node.expanded ? 'folder_open' : 'folder'
         }}</span
       >
-      <div class="select-nonx grow">
+      <div class="select-none grow">
         @if (node.children) {
           {{ node.name }}
         } @else {

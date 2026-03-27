@@ -29,24 +29,39 @@ export async function redirect({
   }
 
   const url = new URL(req.url);
-  const staticRoute = proxyRoutes
-    .filter((e) => new URL(e.target).protocol === 'file:')
-    .find((e) => new RegExp(e.context).exec(url.pathname));
 
-  // for static files serving
-  if (staticRoute) {
-    const isRequestingAsset = (path: string) => /\w+\.\w+$/.test(path);
+  if (req.method === 'GET') {
+    const staticRoute = proxyRoutes
+      .filter((e) => new URL(e.target).protocol === 'file:')
+      .find((e) => new RegExp(e.context).exec(url.pathname));
 
-    const res = await serveStatic({
-      root: normalize(staticRoute.target.replace('file://', '')),
-      rewriteRequestPath: (path) =>
-        !isRequestingAsset(path) ? '/index.html' : path,
-    })(context, async () => {});
+    // for static files serving
+    if (staticRoute) {
+      const res =
+        (await serveStatic({
+          root: normalize(staticRoute.target.replace('file://', '')),
+          rewriteRequestPath: (path) =>
+            execPathRewrite(path, staticRoute.pathRewrite),
+        })(context, async () => {})) ??
+        // fallback to index.html to support SPAs
+        (await serveStatic({
+          root: normalize(staticRoute.target.replace('file://', '')),
+          rewriteRequestPath: (path ) => {
+            // console.log(path);
+            return '/index.html'
+          }
+          // path: './index.html',
+        })(context, async () => {}));
 
-    return [
-      res ?? Response.json({ status: 'Not found' }, { status: 404 }),
-      new URL(staticRoute.target),
-    ];
+      return [
+        res ?? Response.json({ status: 'Not found' }, { status: 404 }),
+        new URL(
+          res?.url ||
+            staticRoute.target +
+              execPathRewrite(url.pathname, staticRoute.pathRewrite),
+        ),
+      ];
+    }
   }
 
   const urlWithoutOrigin = url.toString().replace(url.origin, '');
@@ -58,14 +73,13 @@ export async function redirect({
   const { response, responseError, target } = await getViableResultForRequest(
     viableProxyRoutes,
     url,
-    req
+    req,
   );
 
   if ([301, 302, 307, 308].includes(response.status)) {
-    const location = new URL(
-      response.headers.get('Location') || '',
-      response.url
-    );
+    const locationHeader = response.headers.get('Location')?.trim() || '';
+    const location = new URL(locationHeader, response.url);
+
     return [Response.redirect(location.toString(), response.status), location];
   }
 
@@ -88,11 +102,24 @@ export async function redirect({
     console.log(
       `[${timestamp}] ${responseError.name.padStart(
         11,
-        ' '
+        ' ',
       )} ${req.method.padEnd(7, ' ')}${target.href}\n`,
-      logData
+      logData,
     );
   }
 
   return [response, target] as const;
+}
+
+function execPathRewrite(
+  path: string,
+  pathRewrite: ProxyRoute['pathRewrite'],
+): string {
+  let updatedPath = path;
+  if (pathRewrite) {
+    Object.entries(pathRewrite ?? {}).forEach(([k, v]) => {
+      updatedPath = updatedPath.replace(new RegExp(k), v);
+    });
+  }
+  return updatedPath;
 }

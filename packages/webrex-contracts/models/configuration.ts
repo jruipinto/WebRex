@@ -95,6 +95,12 @@ export class WebRexConfiguration {
    * The ngrok token. Needed to start ngrok tunneling, to allow other machines to connect to your local.
    */
   tunnelingToken?: string;
+  /**
+   * Optional ngrok dev domain. If not defined an new ngrok link will be generated on each start.
+   * It's useful to avoid always having to copy paste the new link.
+   * Dev domain is free even for ngrok free accounts. Go to ngrok dashboard and search for it.
+   */
+  tunnelingDomain?: string;
   tunnelingEnabled?: boolean;
 
   /**

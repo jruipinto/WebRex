@@ -1,6 +1,6 @@
-// import * as esbuild from 'esbuild';
+import * as esbuild from 'esbuild-wasm';
 // Below is the version of esbuild that works in deno compiled mode. Others break in compiled mode
-import * as esbuild from 'https://deno.land/x/esbuild@v0.27.1/mod.js'
+// import * as esbuild from 'https://deno.land/x/esbuild@v0.27.1/mod.js'
 import _patch from './patch.ts' with { type: 'text' };
 
 /**
@@ -9,7 +9,7 @@ import _patch from './patch.ts' with { type: 'text' };
  */
 export async function patchHtmlResponses(
   resp: Response,
-  isMF = false
+  isMF = false,
 ): Promise<Response> {
   const contentType = resp.headers.get('content-type') ?? '';
   if (!contentType.includes('text/html') || resp.status !== 200) {
@@ -18,21 +18,19 @@ export async function patchHtmlResponses(
 
   const text = await resp.text();
 
-  const transformedPatch = await esbuild.transform(_patch, {
+  (globalThis as any).transformedPatch ??= await esbuild.transform(_patch, {
     target: 'es6',
     loader: 'ts',
   });
 
-  await esbuild.stop()
-
   let modified = text
     .replace(
       '<head>',
-      `<head>\n        <script>${transformedPatch.code}</script>\n`
+      `<head>\n        <script>${(globalThis as any).transformedPatch.code}</script>\n`,
     )
     .replace(
       'top.location = self.location;',
-      '// top.location = self.location;'
+      '// top.location = self.location;',
     )
     .replace('self === top', 'true');
 

@@ -54,7 +54,7 @@ export class ReplService {
 
   private refresh$ = this.realtimeApiService.watchEntity('repl').pipe(
     map(() => true),
-    startWith(true)
+    startWith(true),
   );
 
   snippets$ = this.refresh$.pipe(
@@ -65,7 +65,7 @@ export class ReplService {
       combineLatest([
         this.replApiService.search(),
         // this.oldSnippets$
-      ])
+      ]),
     ),
     map(
       ([
@@ -74,13 +74,13 @@ export class ReplService {
       ]) => [
         // ...responseOld.result,
         ...response.result,
-      ]
+      ],
     ),
     tap(() => {
       this.$isFetching.set(false);
     }),
     startWith([] as ApiResponse<ReplDocument>['result']),
-    shareReplay({ refCount: true, bufferSize: 1 })
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
   form = this.fb.group({
@@ -102,7 +102,7 @@ export class ReplService {
     this.form.updateValueAndValidity({ emitEvent: false });
     if (this.form.invalid) {
       this.dialogService.showWarning(
-        `Snippet form is invalid. Fix errors: ${JSON.stringify(this.form.errors)}`
+        `Snippet form is invalid. Fix errors: ${JSON.stringify(this.form.errors)}`,
       );
       return;
     }
@@ -118,14 +118,14 @@ export class ReplService {
 
     if (this.$id()) {
       await firstValueFrom(
-        this.replApiService.patch(this.$id(), this.form.value as ReplDocument)
+        this.replApiService.patch(this.$id(), this.form.value as ReplDocument),
       );
 
       return;
     }
 
     await firstValueFrom(
-      this.replApiService.create(this.form.value as ReplDocument)
+      this.replApiService.create(this.form.value as ReplDocument),
     );
   }
 
@@ -154,7 +154,7 @@ export class ReplService {
   async run(
     i: Pick<ApiResponse<Pick<ReplDocument, 'codeTS'>>['result'][0], 'value'> & {
       id?: string;
-    }
+    },
   ): Promise<void> {
     const javascript = await transform(String(i.value.codeTS), {
       loader: 'ts',
@@ -164,7 +164,27 @@ export class ReplService {
       this.replOutputApiService.create({
         codeTS: i.value.codeTS,
         codeJS: javascript.code,
-      })
+      }),
+    );
+  }
+
+  async duplicate(
+    i: Pick<
+      ApiResponse<
+        Pick<ReplDocument, 'codeTS' | 'codeJS' | 'context' | 'name'>
+      >['result'][0],
+      'value'
+    > & {
+      id?: string;
+    },
+  ): Promise<void> {
+    await firstValueFrom(
+      this.replApiService.create({
+        codeTS: i.value.codeTS,
+        codeJS: i.value.codeJS,
+        context: `${i.value.context}.copy`,
+        name: i.value.name,
+      }),
     );
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { DsButtonComponent } from 'src/shared';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -13,6 +13,8 @@ export class ImportButtonComponent {
   private readonly http = inject(HttpClient);
   $isLoading = signal(false);
 
+  importSuccess = output<boolean>();
+
   async uploadBackup(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) {
@@ -26,5 +28,6 @@ export class ImportButtonComponent {
     await firstValueFrom(this.http.put('/webrex-api/restore', formData));
 
     this.$isLoading.set(false);
+    this.importSuccess.emit(true);
   }
 }

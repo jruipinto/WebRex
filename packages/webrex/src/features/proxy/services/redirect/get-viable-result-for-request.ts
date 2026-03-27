@@ -4,7 +4,7 @@ import { forwardRequestToUrl } from './forward-request-to-url.ts';
 export async function getViableResultForRequest(
   routes: ProxyRoute[],
   requestUrl: URL,
-  request: Request
+  request: Request,
 ): Promise<{
   response: Response;
   responseError: Error | null;
@@ -12,7 +12,7 @@ export async function getViableResultForRequest(
 }> {
   // Avoid infinite loops
   const viableProxyRoutes = routes.filter(
-    ({ target }) => !requestUrl.toString().includes(target)
+    ({ target }) => !target.includes(requestUrl.host)
   );
 
   if (!viableProxyRoutes.length) {

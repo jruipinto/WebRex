@@ -1,3 +1,6 @@
+import { legacyFetch } from './legacy-fetch.ts';
+import { recordFromHeaders } from './record-from-headers.ts';
+
 /**
  * Forwards the provided request to the provided URL
  * and returns a tupple with Response and Error (if any)
@@ -7,12 +10,19 @@ export async function forwardRequestToUrl(
   proxyUrl: URL,
 ): Promise<readonly [Response, null | Error]> {
   const _req = req.clone();
-  const headers = new Headers(_req.headers);
-  headers.has('Host') && headers.set('Host', proxyUrl.hostname);
-  headers.has('Origin') && headers.set('Origin', proxyUrl.origin);
-  headers.has('Access-Control-Allow-Origin') &&
-    headers.set('Access-Control-Allow-Origin', proxyUrl.origin);
-  headers.has('Referer') && headers.set('Referer', proxyUrl.origin);
+  const headers = recordFromHeaders(_req.headers);
+
+  headers['Host'] && (headers['Host'] = proxyUrl.hostname);
+  headers['Origin'] && (headers['Origin'] = proxyUrl.origin);
+  headers['Access-Control-Allow-Origin'] &&
+    (headers['Access-Control-Allow-Origin'] = proxyUrl.origin);
+  headers['Referer'] && (headers['Referer'] = proxyUrl.origin);
+
+  headers['host'] && (headers['host'] = proxyUrl.hostname);
+  headers['origin'] && (headers['origin'] = proxyUrl.origin);
+  headers['access-control-allow-origin'] &&
+    (headers['access-control-allow-origin'] = proxyUrl.origin);
+  headers['referer'] && (headers['referer'] = proxyUrl.origin);
 
   //   headers.has('host') && headers.set('host', proxyUrl.hostname);
   // headers.has('origin') && headers.set('origin', proxyUrl.origin);
@@ -33,11 +43,12 @@ export async function forwardRequestToUrl(
   // headers.set('Access-Control-Allow-Credentials', 'true');
 
   // headers.delete('content-security-policy');
-  headers.delete('X-Origin');
-  headers.delete('ngrok-skip-browser-warning');
-  headers.delete('x-forwarded-for');
-  headers.delete('x-forwarded-host');
-  headers.delete('x-forwarded-proto');
+  delete headers['X-Origin'];
+  delete headers['x-origin'];
+  delete headers['ngrok-skip-browser-warning'];
+  delete headers['x-forwarded-for'];
+  delete headers['x-forwarded-host'];
+  delete headers['x-forwarded-proto'];
 
   const fetchParams = {
     headers,
@@ -60,7 +71,9 @@ export async function forwardRequestToUrl(
     //   )} ${proxyUrl.toString()}`
     // );
 
-    const response = await fetch(proxyUrl, fetchParams);
+    const response = proxyUrl.search.includes('signature')
+      ? await legacyFetch(proxyUrl, fetchParams)
+      : await fetch(proxyUrl, fetchParams);
 
     if (response.status === 403) {
       console.log('proxyUrl', proxyUrl);

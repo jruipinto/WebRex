@@ -2,7 +2,7 @@
 
 ## Introduction
 
-WebRex is a proxy, on steroids.
+WebRex is a debugging proxy made for web developers.
 
 Its configuration tries to resemble webpack-dev-server (for simplicity and UX familiarity reasons).
 

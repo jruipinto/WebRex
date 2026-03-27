@@ -10,7 +10,9 @@
     slot="topcontrols"
     class="grow inline-flex justify-end items-center ps-1"
   >
-    <app-import-button></app-import-button>
+    <app-import-button
+      (importSuccess)="forceRefreshSubject.next($event)"
+    ></app-import-button>
     <app-export-button></app-export-button>
     <ds-button
       [title]="'Save WebRex configuration\'s changes'"

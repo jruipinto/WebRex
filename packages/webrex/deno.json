@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0-rc.37",
+  "version": "2.0.0-rc67",
   "license": "AGPL-3.0-only",
   "nodeModulesDir": "auto",
   "compilerOptions": {
@@ -15,7 +15,7 @@
   ],
   "tasks": {
     "start": "deno run -A src/main.ts",
-    "dev": "deno run -A --watch src/main.ts --watch",
+    "dev": "deno run -A --watch src/main.ts",
     "pack-ui": "deno run -A scripts/compress-static-assets.ts",
     "compile": "deno task pack-ui && deno compile --icon favicon.ico -A --include tmp  --output dist/WebRex src/main.ts"
   },
@@ -29,7 +29,7 @@
     "@ngrok/ngrok": "npm:@ngrok/ngrok@~1.7.0",
     "@olli/kvdex": "jsr:@olli/kvdex@~3.4.2",
     "arktype": "npm:arktype@^2.1.29",
-    "esbuild": "npm:esbuild@~0.25.10",
+    "esbuild-wasm": "https://deno.land/x/esbuild@v0.27.3/wasm.js",
     "hono": "npm:hono@~4.11.3",
     "object-deep-compare": "npm:object-deep-compare",
     "qrcode-terminal": "npm:qrcode-terminal@~0.12.0",

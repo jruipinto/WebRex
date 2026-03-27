@@ -10,6 +10,7 @@ import { ReplOutputDocument } from '@models/repl-output-document.ts';
 import { InterceptorDocument } from '@models/interceptor-document.ts';
 import { ServerlogsDocument } from '@models/serverlogs-document.ts';
 import { WeblogsDocument } from '@models/weblogs-document.ts';
+import { ProxyLogDocument } from '@models/proxy-log-document.ts';
 
 export async function noSqlDb(path?: string) {
   console.log('Preparing DB...');
@@ -41,6 +42,7 @@ export async function noSqlDb(path?: string) {
       interceptors: collection(InterceptorDocument),
       serverlogs: collection(ServerlogsDocument),
       weblogs: collection(WeblogsDocument),
+      proxylogs: collection(ProxyLogDocument),
     },
   });
 }
@@ -53,3 +55,8 @@ type PickString<T> = {
 }[keyof T];
 
 export type NoSqlDBCollectionsNames = PickString<NoSqlDB>;
+
+export const UniqueKeys = new Map<NoSqlDBCollectionsNames, string[]>([
+  ['repl', ['context'] satisfies Array<keyof ReplDocument>],
+  ['interceptors', ['context'] satisfies Array<keyof InterceptorDocument>],
+]);

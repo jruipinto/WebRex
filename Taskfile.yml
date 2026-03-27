@@ -19,5 +19,5 @@ tasks:
     cmd: npm run watch
     summary: |
       Builds WebRex UI in watch mode to allow you to develop the UI.
-      PS: It's mandatory to run backend in parallel because it serves the fronted
+      PS: It's mandatory to run backend in parallel because it serves the frontned
 

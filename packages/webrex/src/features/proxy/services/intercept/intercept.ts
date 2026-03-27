@@ -17,7 +17,7 @@ export async function intercept(
   pathname: string,
   response: Response,
   config: WebRexConfiguration,
-  db: NoSqlDB
+  db: NoSqlDB,
 ): Promise<Response> {
   const responseInterceptorFn = await getInterceptor(pathname, config, db);
 
@@ -47,7 +47,7 @@ export async function intercept(
 async function getInterceptor(
   pathname: string,
   config: WebRexConfiguration,
-  db: NoSqlDB
+  db: NoSqlDB,
 ): Promise<ResponseInterceptor | null> {
   const interceptorTemplate = (
     await db.interceptors.getOne({
@@ -55,11 +55,21 @@ async function getInterceptor(
     })
   )?.value.codeJS;
 
+  if (!interceptorTemplate) {
+    return null;
+  }
+
+  // TODO: remove the commented code below, if the alternative proves to be stable
+  // Deno's compiled binaries lack a DOM-like environment. URL.createObjectURL is a Web API often missing or restricted in standalone executables.
+  // For this reason, URL.createObjectURL didn't work in compiled app and that's why there is the analogous solution, below, using dynamic import with `data:`
+  // const interceptorUrl = interceptorTemplate
+  //   ? URL.createObjectURL(
+  //       new Blob([interceptorTemplate], { type: 'application/javascript' })
+  //     )
+  //   : null; // await getLocalInterceptor(pathname, config.mockpath);
   const interceptorUrl = interceptorTemplate
-    ? URL.createObjectURL(
-        new Blob([interceptorTemplate], { type: 'application/javascript' })
-      )
-    : null; // await getLocalInterceptor(pathname, config.mockpath);
+    ? `data:application/javascript;base64,${btoa(interceptorTemplate)}`
+    : null;
 
   if (!interceptorUrl) {
     return null;

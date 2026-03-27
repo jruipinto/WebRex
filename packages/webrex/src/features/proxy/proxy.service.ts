@@ -1,6 +1,7 @@
 import { Context } from 'hono';
 import { InternalConfig } from '@core/config/internal-config.ts';
 import { redirect } from './services/redirect/redirect.ts';
+import { firstValueFrom } from 'rxjs';
 
 export const proxyService = {
   /**
@@ -14,7 +15,13 @@ export const proxyService = {
 
     const [responseFromApi, target] = await redirect(params);
 
-    this.logRequest(params.context.req.raw, responseFromApi, target, requestMs);
+    this.logRequest(
+      params.context.req.raw,
+      responseFromApi,
+      target,
+      requestMs,
+      params.conf,
+    );
 
     return responseFromApi;
   },
@@ -22,7 +29,13 @@ export const proxyService = {
   /**
    * Internal Audit Logger
    */
-  logRequest(req: Request, res: Response, target: URL, startTime: number) {
+  async logRequest(
+    req: Request,
+    res: Response,
+    target: URL,
+    startTime: number,
+    conf: InternalConfig,
+  ): Promise<void> {
     if (this.isInternalRequest(target.pathname)) {
       return;
     }
@@ -33,8 +46,46 @@ export const proxyService = {
     console.log(
       `[${timestamp}] ${(duration + 'ms').padStart(7, ' ')} ${
         res.status
-      } ${req.method.padEnd(6, ' ')} ${target.href}`
+      } ${req.method.padEnd(6, ' ')} ${target.href}`,
     );
+
+    if (res.status === 403) {
+      console.log(
+        '403 Request headers:',
+        JSON.stringify(objFromHeaders(req.headers)),
+      );
+      console.log(
+        '403 Response headers:',
+        JSON.stringify(objFromHeaders(res.headers)),
+      );
+      console.log(
+        '403 Response body:',
+        JSON.stringify(await res.clone().text()),
+      );
+    }
+
+    return;
+    const db = await firstValueFrom(conf.db$);
+
+    db.proxylogs.add({
+      correlationId: startTime.toString(),
+      request: {
+        url: req.url,
+        method: req.method as any,
+        headers: objFromHeaders(req.headers),
+        body: req.body ? await req.text() : '',
+      },
+      responses: [
+        {
+          url: res.url,
+          status: res.status,
+          statusText: res.statusText,
+          ok: res.ok,
+          headers: objFromHeaders(res.headers),
+          body: res.body ? await res.text() : '',
+        },
+      ],
+    });
   },
 
   /**
@@ -47,3 +98,11 @@ export const proxyService = {
     ].some((pattern) => path.includes(pattern));
   },
 };
+
+function objFromHeaders(headers: Headers): Record<string, string> {
+  const obj = {} as Record<string, string>;
+  headers.forEach((_, k) => {
+    obj[k] = headers.get(k) ?? '';
+  });
+  return obj;
+}

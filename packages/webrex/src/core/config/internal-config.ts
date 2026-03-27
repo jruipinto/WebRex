@@ -71,6 +71,7 @@ export class InternalConfig {
 
     await db.weblogs.deleteMany(); // resets the store logs from browser console. Do not mistake with serverlogs, which used in telemetry
     await db.reploutput.deleteMany(); // resets the reploutput which is just contains all snippets executed. We don't need to keep them between sessions
+    await db.proxylogs.deleteMany(); // resets the proxylogs. We don't need to keep them between sessions
 
     // Add default settings in case none exist (which happens in first install)
     const existingConfSaved = await db.settings.getOne();

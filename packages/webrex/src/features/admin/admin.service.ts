@@ -1,10 +1,15 @@
-import { NoSqlDB, NoSqlDBCollectionsNames } from '@core/database/no-sql-db.ts';
+import {
+  NoSqlDB,
+  NoSqlDBCollectionsNames,
+  UniqueKeys,
+} from '@core/database/no-sql-db.ts';
 import { dbBackup } from './services/db-backup/db-backup.ts'; // You can move this logic here later
 import { dbRestore } from './services/db-backup/db-restore.ts';
 import {
   realtimeChanges$,
   RealtimeEvent,
 } from '@core/bootstrap/realtime.stream.ts';
+import { tryToParse } from '@core/utils/try-to-parse.ts';
 
 export const adminService = {
   /**
@@ -23,10 +28,29 @@ export const adminService = {
   async createEntity(
     db: NoSqlDB,
     entity: NoSqlDBCollectionsNames,
-    payload: any
+    payload: any,
   ) {
     const collection = db[entity];
-    collection.getOne();
+
+    const isDuplicatingUniqueKey = (
+      await Promise.all(
+        (UniqueKeys.get(entity) ?? []).map((uniqueKey) =>
+          collection.getOne({
+            filter: (doc) =>
+              typeof doc.value !== 'string' &&
+              Object.hasOwn(doc.value, uniqueKey) &&
+              (doc.value as Record<string, unknown>)[uniqueKey] ===
+                payload[uniqueKey],
+          }),
+        ),
+      )
+    ).some(Boolean);
+    if (isDuplicatingUniqueKey) {
+      return {
+        ok: false,
+        errors: `You can't duplicate the following keys of '${entity}' because they are unique: "${UniqueKeys.get(entity)?.join(', ')}". Check your payload.`,
+      };
+    }
     const status = await collection
       .add(payload)
       .catch(mapSchemaErrors(undefined));
@@ -44,7 +68,7 @@ export const adminService = {
     db: NoSqlDB,
     entity: NoSqlDBCollectionsNames,
     id: string,
-    payload: any
+    payload: any,
   ) {
     const collection = db[entity];
     const status = await collection
@@ -64,7 +88,7 @@ export const adminService = {
     db: NoSqlDB,
     entity: NoSqlDBCollectionsNames,
     id: string,
-    payload: any
+    payload: any,
   ) {
     const collection = db[entity];
     const status = await collection
@@ -111,7 +135,7 @@ export const adminService = {
     entity: NoSqlDBCollectionsNames,
     type: RealtimeEvent['data']['type'],
     id?: string,
-    payload?: unknown
+    payload?: unknown,
   ) {
     realtimeChanges$.next({
       type: 'realtimechanges',
@@ -127,10 +151,15 @@ export const adminService = {
   },
 };
 
-const mapSchemaErrors = (id: string | undefined) => (err: Error) => ({
-  errors: (JSON.parse(err.message) ?? [])?.map(
-    (i: { message: string }) => i.message
-  ),
-  ok: false,
-  id,
-});
+const mapSchemaErrors = (id: string | undefined) => (err: Error) => {
+  const parsedMessage = tryToParse(err.message);
+  const errors =
+    typeof parsedMessage === 'string'
+      ? parsedMessage
+      : (parsedMessage ?? [])?.map((i: { message: string }) => i.message);
+  return {
+    errors,
+    ok: false,
+    id,
+  };
+};
